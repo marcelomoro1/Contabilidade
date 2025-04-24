@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Detalhes do Cliente - Sistema de Contabilidade</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="bi bi-shop me-2"></i>
+                Loja
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/vendas">
+                            <i class="bi bi-cart me-1"></i>Vendas
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/fornecedores">
+                            <i class="bi bi-truck me-1"></i>Fornecedores
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/clientes">
+                            <i class="bi bi-people me-1"></i>Clientes
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/produtos">
+                            <i class="bi bi-boxes me-1"></i>Produtos
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-8 offset-md-2">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h3 class="card-title mb-0">
+                            <i class="bi bi-person me-2"></i>Detalhes do Cliente
+                        </h3>
+                        <div>
+                            <a th:href="@{/clientes/{id}/editar(id=${cliente.id})}" class="btn btn-warning btn-sm">
+                                <i class="bi bi-pencil me-1"></i>Editar
+                            </a>
+                            <a th:href="@{/clientes}" class="btn btn-secondary btn-sm">
+                                <i class="bi bi-arrow-left me-1"></i>Voltar
+                            </a>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-3">
+                            <div class="col-md-3 fw-bold">ID:</div>
+                            <div class="col-md-9" th:text="${cliente.id}"></div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-3 fw-bold">Nome:</div>
+                            <div class="col-md-9" th:text="${cliente.nome}"></div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-3 fw-bold">Tipo de Pessoa:</div>
+                            <div class="col-md-9">
+                                <span th:if="${cliente.tipoPessoa == T(com.loja.model.Cliente.TipoPessoa).FISICA}" 
+                                      class="badge bg-primary">Pessoa Física</span>
+                                <span th:if="${cliente.tipoPessoa == T(com.loja.model.Cliente.TipoPessoa).JURIDICA}" 
+                                      class="badge bg-info">Pessoa Jurídica</span>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-3 fw-bold">CPF/CNPJ:</div>
+                            <div class="col-md-9" th:text="${cliente.cpf}"></div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-3 fw-bold">Cidade:</div>
+                            <div class="col-md-9" th:text="${cliente.cidade}"></div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-3 fw-bold">Estado:</div>
+                            <div class="col-md-9" th:text="${cliente.estado}"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-light py-4 mt-5">
+        <div class="container text-center">
+            <p class="mb-0">&copy; 2024 Loja - Sistema de Contabilidade. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html> 
