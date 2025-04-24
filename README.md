@@ -178,5 +178,3 @@ Contribuições são sempre bem-vindas! Para contribuir:
 Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
 
 ---
-
-Desenvolvido com ❤️ por [Seu Nome](https://github.com/seu-usuario) 
