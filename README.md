@@ -1,4 +1,4 @@
-# Sistema de Contabilidade
+# Sistema de Gerenciamento de vendas
 
 ![Banner do Sistema](https://img.shields.io/badge/Sistema%20de%20Contabilidade-v1.0-blue)
 ![Java](https://img.shields.io/badge/Java-17-red)
@@ -19,7 +19,7 @@
 
 ## 🚀 Sobre o Projeto
 
-O Sistema de Contabilidade é uma aplicação web desenvolvida para gerenciar operações comerciais de uma loja, incluindo vendas, clientes, fornecedores e produtos. O sistema permite o controle de estoque, registro de vendas, cadastro de clientes e fornecedores, além de fornecer relatórios básicos para análise financeira.
+O Projeto é uma aplicação web desenvolvida para gerenciar operações comerciais de uma loja, incluindo vendas, clientes, fornecedores e produtos. O sistema permite o controle de estoque, registro de vendas, cadastro de clientes e fornecedores.
 
 ## ✨ Funcionalidades
 
@@ -66,7 +66,6 @@ O Sistema de Contabilidade é uma aplicação web desenvolvida para gerenciar op
   - jQuery Mask Plugin
 
 - **Banco de Dados:**
-  - H2 (desenvolvimento)
   - MySQL (produção)
 
 ## 📁 Estrutura do Projeto
@@ -137,35 +136,6 @@ spring.jpa.hibernate.ddl-auto=update
 spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQLDialect
 ```
 
-## 📸 Screenshots
-
-### Página Inicial
-![Página Inicial](screenshots/home.png)
-
-### Lista de Clientes
-![Lista de Clientes](screenshots/clientes-lista.png)
-
-### Cadastro de Cliente
-![Cadastro de Cliente](screenshots/clientes-form.png)
-
-### Detalhes do Cliente
-![Detalhes do Cliente](screenshots/clientes-detalhes.png)
-
-### Lista de Produtos
-![Lista de Produtos](screenshots/produtos-lista.png)
-
-### Cadastro de Produto
-![Cadastro de Produto](screenshots/produtos-form.png)
-
-### Lista de Vendas
-![Lista de Vendas](screenshots/vendas-lista.png)
-
-### Nova Venda
-![Nova Venda](screenshots/vendas-form.png)
-
-## 🤝 Contribuição
-
-Contribuições são sempre bem-vindas! Para contribuir:
 
 1. Faça um fork do projeto
 2. Crie uma branch para sua feature (`git checkout -b feature/nova-feature`)
@@ -173,8 +143,4 @@ Contribuições são sempre bem-vindas! Para contribuir:
 4. Faça push para a branch (`git push origin feature/nova-feature`)
 5. Abra um Pull Request
 
-## 📄 Licença
 
-Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
-
----
