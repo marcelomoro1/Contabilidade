@@ -126,7 +126,7 @@ http://localhost:8080
 
 ### Configuração do banco de dados
 
-O sistema utiliza H2 por padrão para desenvolvimento. Para configurar um banco de dados MySQL em produção, edite o arquivo `application.properties`:
+Para configurar um banco de dados MySQL em produção, edite o arquivo `application.properties`:
 
 ```properties
 spring.datasource.url=jdbc:mysql://localhost:3306/sistema_contabilidade
