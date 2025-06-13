@@ -10,28 +10,28 @@ public class Produto implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
+
     private String nome;
     private String descricao;
-    
-    @Column(name = "preco_compra")
+
+    @Column(name = "preco_compra", precision = 10, scale = 2) // Adicionado precisão
     private BigDecimal precoCompra;
-    
-    @Column(name = "preco_venda")
+
+    @Column(name = "preco_venda", precision = 10, scale = 2) // Adicionado precisão
     private BigDecimal precoVenda;
-    
-    @Column(name = "credito_icms")
+
+    @Column(name = "credito_icms", precision = 10, scale = 2) // Adicionado precisão
     private BigDecimal creditoIcms;
-    
-    @Column(name = "debito_icms")
+
+    @Column(name = "debito_icms", precision = 10, scale = 2) // Adicionado precisão
     private BigDecimal debitoIcms;
-    
+
     private Integer quantidade;
-    
-    @Column(name = "custo_total")
+
+    @Column(name = "custo_total", precision = 10, scale = 2) // Adicionado precisão
     private BigDecimal custoTotal;
-    
-    @Column(name = "lucro_total")
+
+    @Column(name = "lucro_total", precision = 10, scale = 2) // Adicionado precisão
     private BigDecimal lucroTotal;
 
     // Getters e Setters
@@ -114,4 +114,4 @@ public class Produto implements Serializable {
     public void setLucroTotal(BigDecimal lucroTotal) {
         this.lucroTotal = lucroTotal;
     }
-} 
+}

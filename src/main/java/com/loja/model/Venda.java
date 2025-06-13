@@ -4,126 +4,111 @@ import com.loja.model.enums.FormaPagamento;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import java.math.RoundingMode; // Importar para arredondamento
 
 @Entity
-@Table(name = "vendas")
-public class Venda implements Serializable {
-    
+public class Venda {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
+
     @ManyToOne
     @JoinColumn(name = "cliente_id", nullable = false)
     private Cliente cliente;
-    
-    @ManyToOne
-    @JoinColumn(name = "produto_id", nullable = false)
-    private Produto produto;
-    
-    @Column(nullable = false)
-    private Integer quantidade;
-    
-    @Column(name = "valor_unitario", nullable = false)
-    private BigDecimal valorUnitario;
-    
-    @Column(name = "valor_total", nullable = false)
-    private BigDecimal valorTotal;
-    
-    @Column(name = "data_venda", nullable = false)
-    private LocalDateTime dataVenda;
-    
-    @Enumerated(EnumType.STRING)
-    @Column(name = "forma_pagamento", nullable = false)
-    private FormaPagamento formaPagamento;
-    
-    @Column(nullable = false)
-    private Integer parcelas;
 
-    // Constructors
+    private LocalDateTime dataVenda;
+
+    @Enumerated(EnumType.STRING)
+    private FormaPagamento formaPagamento;
+
+    private Integer parcelas; // Número de parcelas se for a prazo
+
+    @Column(name = "valor_total", precision = 10, scale = 2) // Campo persistido para o total da venda (será populado no service)
+    private BigDecimal valorTotal; // Manter como campo, mas seu valor será definido pelo service
+
+    @Column(name = "saldo_a_receber", precision = 10, scale = 2)
+    private BigDecimal saldoAReceber;
+
+    // NOVOS CAMPOS PARA PARCELAMENTO
+    @Column(name = "valor_parcela", precision = 10, scale = 2)
+    private BigDecimal valorParcela;
+
+    @Column(name = "parcelas_pagas")
+    private Integer parcelasPagas;
+    // FIM DOS NOVOS CAMPOS
+
+    @OneToMany(mappedBy = "venda", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY) // Adicionei LAZY
+    private List<ItemVenda> itensVenda = new ArrayList<>();
+
+    // Construtor padrão
     public Venda() {
         this.dataVenda = LocalDateTime.now();
-        this.parcelas = 1; // Valor padrão para parcelas
+        this.valorTotal = BigDecimal.ZERO;
+        this.saldoAReceber = BigDecimal.ZERO;
+        this.valorParcela = BigDecimal.ZERO;
+        this.parcelasPagas = 0;
     }
 
-    // Getters and Setters
-    public Long getId() {
-        return id;
-    }
+    // Getters e Setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public Cliente getCliente() { return cliente; }
+    public void setCliente(Cliente cliente) { this.cliente = cliente; }
 
-    public Cliente getCliente() {
-        return cliente;
-    }
+    public LocalDateTime getDataVenda() { return dataVenda; }
+    public void setDataVenda(LocalDateTime dataVenda) { this.dataVenda = dataVenda; }
 
-    public void setCliente(Cliente cliente) {
-        this.cliente = cliente;
-    }
+    public FormaPagamento getFormaPagamento() { return formaPagamento; }
+    public void setFormaPagamento(FormaPagamento formaPagamento) { this.formaPagamento = formaPagamento; }
 
-    public Produto getProduto() {
-        return produto;
-    }
+    public Integer getParcelas() { return parcelas; }
+    public void setParcelas(Integer parcelas) { this.parcelas = parcelas; }
 
-    public void setProduto(Produto produto) {
-        this.produto = produto;
-    }
-
-    public Integer getQuantidade() {
-        return quantidade;
-    }
-
-    public void setQuantidade(Integer quantidade) {
-        this.quantidade = quantidade;
-    }
-
-    public BigDecimal getValorUnitario() {
-        return valorUnitario;
-    }
-
-    public void setValorUnitario(BigDecimal valorUnitario) {
-        this.valorUnitario = valorUnitario;
-    }
-
+    // O getter de valorTotal será o campo persistido.
+    // O service é responsável por calcular a soma dos itens e setar este campo.
     public BigDecimal getValorTotal() {
+        // Se você quer que o getter CALCULE DINAMICAMENTE (e não pegue o campo persistido)
+        // e se o campo valorTotal for apenas para persistir o último cálculo, então:
+        // return itensVenda.stream()
+        //         .map(ItemVenda::getSubtotal)
+        //         .reduce(BigDecimal.ZERO, BigDecimal::add)
+        //         .setScale(2, RoundingMode.HALF_UP);
+        // Ou, se o campo for o valor de referência:
         return valorTotal;
     }
+    // O setter para valorTotal é necessário porque o service o preenche.
+    public void setValorTotal(BigDecimal valorTotal) { this.valorTotal = valorTotal; }
 
-    public void setValorTotal(BigDecimal valorTotal) {
-        this.valorTotal = valorTotal;
+
+    public BigDecimal getSaldoAReceber() { return saldoAReceber; }
+    public void setSaldoAReceber(BigDecimal saldoAReceber) { this.saldoAReceber = saldoAReceber; }
+
+    public BigDecimal getValorParcela() { return valorParcela; }
+    public void setValorParcela(BigDecimal valorParcela) { this.valorParcela = valorParcela; }
+
+    public Integer getParcelasPagas() { return parcelasPagas; }
+    public void setParcelasPagas(Integer parcelasPagas) { this.parcelasPagas = parcelasPagas; }
+
+    public List<ItemVenda> getItensVenda() { return itensVenda; }
+    public void setItensVenda(List<ItemVenda> itensVenda) { this.itensVenda = itensVenda; }
+
+    // Método auxiliar para adicionar um item à venda
+    public void addItemVenda(ItemVenda item) {
+        if (this.itensVenda == null) {
+            this.itensVenda = new ArrayList<>();
+        }
+        this.itensVenda.add(item);
+        item.setVenda(this); // Garante a ligação bidirecional
     }
 
-    public LocalDateTime getDataVenda() {
-        return dataVenda;
-    }
-
-    public void setDataVenda(LocalDateTime dataVenda) {
-        this.dataVenda = dataVenda;
-    }
-
-    public FormaPagamento getFormaPagamento() {
-        return formaPagamento;
-    }
-
-    public void setFormaPagamento(FormaPagamento formaPagamento) {
-        this.formaPagamento = formaPagamento;
-    }
-
-    public Integer getParcelas() {
-        return parcelas;
-    }
-
-    public void setParcelas(Integer parcelas) {
-        this.parcelas = parcelas;
-    }
-
-    // Helper method to calculate total value
-    public void calculateTotalValue() {
-        if (this.quantidade != null && this.valorUnitario != null) {
-            this.valorTotal = this.valorUnitario.multiply(BigDecimal.valueOf(this.quantidade));
+    // Método auxiliar para remover um item da venda
+    public void removeItemVenda(ItemVenda item) {
+        if (this.itensVenda != null) {
+            this.itensVenda.remove(item);
+            item.setVenda(null);
         }
     }
-} 
+}

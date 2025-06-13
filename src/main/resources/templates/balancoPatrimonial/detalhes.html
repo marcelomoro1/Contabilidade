@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Balanço Patrimonial</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body { padding-top: 20px; background-color: #f8f9fa; }
+        .container { max-width: 800px; background-color: #ffffff; padding: 30px; border-radius: 8px; box-shadow: 0 0 15px rgba(0,0,0,0.1); }
+        .section-header { margin-top: 20px; margin-bottom: 10px; font-weight: bold; font-size: 1.25rem; padding: 10px 15px; border-radius: 5px; }
+        .card-header.bg-success { background-color: #28a745 !important; }
+        .card-header.bg-danger { background-color: #dc3545 !important; }
+        .card-header.bg-info { background-color: #17a2b8 !important; }
+        .item-list { list-style-type: none; padding-left: 0; margin-bottom: 10px; }
+        .item-list li { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px dotted #e9ecef; font-size: 0.95rem; }
+        .item-list li:last-child { border-bottom: none; }
+        .total-row { font-weight: bold; margin-top: 15px; padding-top: 10px; border-top: 2px solid #343a40; font-size: 1.1rem; display: flex; justify-content: space-between; }
+        .total-geral { margin-top: 30px; padding: 20px; border-radius: 8px; font-size: 1.1rem; }
+        .total-geral p { margin-bottom: 5px; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2 class="mb-3 text-center">Balanço Patrimonial</h2>
+    <p class="text-center text-muted">Data de Referência: <strong th:text="${#temporals.format(dataReferencia, 'dd/MM/yyyy')}">DD/MM/YYYY</strong></p>
+
+    <div th:if="${erro}" class="alert alert-danger" role="alert">
+        <span th:text="${erro}"></span>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header bg-success text-white section-header">Ativos</div>
+        <div class="card-body">
+            <ul class="item-list">
+                <li th:each="item : ${balanco.bensDireitos}">
+                    <div>
+                        <span th:text="${item.nome}">Nome do Ativo</span>
+                        <span th:if="${item.descricao != null and item.descricao.length() > 0}" th:text="': ' + ${item.descricao}"></span>
+                    </div>
+                    <span th:text="${#numbers.formatCurrency(item.valor)}">Valor</span>
+                </li>
+            </ul>
+            <div class="total-row">
+                <span>TOTAL DOS ATIVOS:</span>
+                <span th:text="${#numbers.formatCurrency(balanco.totalAtivos)}"></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header bg-danger text-white section-header">Passivos</div>
+        <div class="card-body">
+            <ul class="item-list">
+                <li th:each="item : ${balanco.obrigacoes}">
+                    <div>
+                        <span th:text="${item.descricao}">Descrição da Obrigação</span>
+                    </div>
+                    <span th:text="${#numbers.formatCurrency(item.valor)}">Valor</span>
+                </li>
+            </ul>
+            <div class="total-row">
+                <span>TOTAL DOS PASSIVOS:</span>
+                <span th:text="${#numbers.formatCurrency(balanco.totalPassivos)}"></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header bg-info text-white section-header">Patrimônio Líquido</div>
+        <div class="card-body">
+            <ul class="item-list">
+                <li th:each="item : ${balanco.patrimonioLiquidoItems}">
+                    <div>
+                        <span th:text="${item.nome}">Nome do Item PL</span>
+                        <span th:if="${item.descricao != null and item.descricao.length() > 0}" th:text="': ' + ${item.descricao}"></span>
+                    </div>
+                    <span th:text="${#numbers.formatCurrency(item.valor)}">Valor</span>
+                </li>
+            </ul>
+            <div class="total-row">
+                <span>TOTAL DO PATRIMÔNIO LÍQUIDO:</span>
+                <span th:text="${#numbers.formatCurrency(balanco.patrimonioLiquido)}"></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="alert text-center total-geral"
+         th:classappend="${balanco.totalAtivos.compareTo(balanco.totalPassivos.add(balanco.patrimonioLiquido)) == 0} ? 'alert-success' : 'alert-warning'">
+        <p><strong>Ativo = Passivo + Patrimônio Líquido</strong></p>
+        <p>
+            <span th:text="${#numbers.formatCurrency(balanco.totalAtivos)}"></span>
+            =
+            <span th:text="${#numbers.formatCurrency(balanco.totalPassivos.add(balanco.patrimonioLiquido))}"></span>
+        </p>
+        <p th:if="${balanco.totalAtivos.compareTo(balanco.totalPassivos.add(balanco.patrimonioLiquido)) == 0}">
+            <strong class="text-success">Balanço Equilibrado!</strong>
+        </p>
+        <p th:unless="${balanco.totalAtivos.compareTo(balanco.totalPassivos.add(balanco.patrimonioLiquido)) == 0}">
+            <strong class="text-danger">Balanço Desequilibrado! Verifique os lançamentos.</strong>
+        </p>
+    </div>
+
+    <div class="text-center mt-4">
+        <a th:href="@{/}" class="btn btn-primary">Voltar ao Início</a>
+    </div>
+
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

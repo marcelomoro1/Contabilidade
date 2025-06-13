@@ -10,85 +10,105 @@
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark">
-        <div class="container">
-            <a class="navbar-brand" href="/">
-                <i class="bi bi-shop me-2"></i>
-                Loja
+<nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container">
+        <a class="navbar-brand" href="/">
+            <i class="bi bi-shop me-2"></i>
+            Loja
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/vendas">
+                        <i class="bi bi-cart me-1"></i>Vendas
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="/fornecedores">
+                        <i class="bi bi-truck me-1"></i>Fornecedores
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/clientes">
+                        <i class="bi bi-people me-1"></i>Clientes
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/produtos">
+                        <i class="bi bi-boxes me-1"></i>Produtos
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/bens">
+                        <i class="bi bi-building me-1"></i>Bens
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/capital-social">
+                        <i class="bi bi-currency-dollar me-1"></i>Capital Social
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/compras">
+                        <i class="bi bi-box-seam me-1"></i>Compras
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/balanco-patrimonial">
+                        <i class="bi bi-journal-check me-1"></i>Balanço Patrimonial
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0">
+            <i class="bi bi-truck me-2"></i>Detalhes do Fornecedor
+        </h2>
+        <div>
+            <a href="/" class="btn btn-secondary me-2">
+                <i class="bi bi-house me-2"></i>Início
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/vendas">
-                            <i class="bi bi-cart me-1"></i>Vendas
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="/fornecedores">
-                            <i class="bi bi-truck me-1"></i>Fornecedores
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/clientes">
-                            <i class="bi bi-people me-1"></i>Clientes
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/produtos">
-                            <i class="bi bi-boxes me-1"></i>Produtos
-                        </a>
-                    </li>
-                </ul>
-            </div>
+            <a th:href="@{/fornecedores/{id}/editar(id=${fornecedor.id})}" class="btn btn-warning me-2">
+                <i class="bi bi-pencil me-2"></i>Editar
+            </a>
+            <a th:href="@{/fornecedores}" class="btn btn-primary">
+                <i class="bi bi-arrow-left me-2"></i>Voltar
+            </a>
         </div>
-    </nav>
+    </div>
 
-    <div class="container mt-4">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2 class="mb-0">
-                <i class="bi bi-truck me-2"></i>Detalhes do Fornecedor
-            </h2>
-            <div>
-                <a href="/" class="btn btn-secondary me-2">
-                    <i class="bi bi-house me-2"></i>Início
-                </a>
-                <a th:href="@{/fornecedores/{id}/editar(id=${fornecedor.id})}" class="btn btn-warning me-2">
-                    <i class="bi bi-pencil me-2"></i>Editar
-                </a>
-                <a th:href="@{/fornecedores}" class="btn btn-primary">
-                    <i class="bi bi-arrow-left me-2"></i>Voltar
-                </a>
-            </div>
-        </div>
-
-        <div class="card">
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-6">
-                        <p><strong>ID:</strong> <span th:text="${fornecedor.id}"></span></p>
-                        <p><strong>Nome:</strong> <span th:text="${fornecedor.nome}"></span></p>
-                        <p><strong>CNPJ:</strong> <span th:text="${fornecedor.cnpj}"></span></p>
-                        <p><strong>Telefone:</strong> <span th:text="${fornecedor.telefone}"></span></p>
-                    </div>
-                    <div class="col-md-6">
-                        <p><strong>Email:</strong> <span th:text="${fornecedor.email}"></span></p>
-                        <p><strong>Cidade:</strong> <span th:text="${fornecedor.cidade}"></span></p>
-                        <p><strong>Estado:</strong> <span th:text="${fornecedor.estado}"></span></p>
-                    </div>
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>ID:</strong> <span th:text="${fornecedor.id}"></span></p>
+                    <p><strong>Nome:</strong> <span th:text="${fornecedor.nome}"></span></p>
+                    <p><strong>CNPJ:</strong> <span th:text="${fornecedor.cnpj}"></span></p>
+                    <p><strong>Telefone:</strong> <span th:text="${fornecedor.telefone}"></span></p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Email:</strong> <span th:text="${fornecedor.email}"></span></p>
+                    <p><strong>Cidade:</strong> <span th:text="${fornecedor.cidade}"></span></p>
+                    <p><strong>Estado:</strong> <span th:text="${fornecedor.estado}"></span></p>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
-    <footer class="bg-light py-4 mt-5">
-        <div class="container text-center">
-            <p class="mb-0">&copy; 2024 Loja - Sistema de Contabilidade. Todos os direitos reservados.</p>
-        </div>
-    </footer>
+<footer class="bg-light py-4 mt-5">
+    <div class="container text-center">
+        <p class="mb-0">&copy; 2024 Loja - Sistema de Contabilidade. Todos os direitos reservados.</p>
+    </div>
+</footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-</html> 
+</html>
