@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrar Capital Social</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body { padding-top: 20px; }
+        .container { max-width: 600px; }
+        .form-group label { font-weight: bold; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1 class="mb-4" th:text="${capitalSocial.id == null ? 'Registrar Novo Capital Social' : 'Editar Capital Social'}">Registrar Novo Capital Social</h1>
+
+    <div th:if="${mensagem}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <span th:text="${mensagem}"></span>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div th:if="${erro}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <span th:text="${erro}"></span>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <form th:action="@{/capital-social/salvar}" th:object="${capitalSocial}" method="post">
+                <input type="hidden" th:field="*{id}" />
+
+                <div class="form-group">
+                    <label for="valorAbertura">Valor de Abertura:</label>
+                    <input type="number" id="valorAbertura" th:field="*{valorAbertura}"
+                           class="form-control" step="0.01" min="0" required
+                           placeholder="Ex: 10000.00" />
+                </div>
+
+                <div class="form-group">
+                    <label for="dataAbertura">Data de Abertura:</label>
+                    <input type="date" id="dataAbertura" th:field="*{dataAbertura}"
+                           class="form-control" required />
+                </div>
+
+                <button type="submit" class="btn btn-primary">Salvar</button>
+                <a th:href="@{/capital-social}" class="btn btn-secondary">Cancelar</a>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

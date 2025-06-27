@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Compras</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body { padding-top: 20px; }
+        .container-fluid { max-width: 1200px; }
+        .btn-acao { margin-right: 5px; margin-bottom: 5px; }
+    </style>
+</head>
+<body>
+<div class="container-fluid">
+    <h2 class="mb-4">Lista de Compras</h2>
+
+    <div th:if="${mensagem}" class="alert alert-success" role="alert">
+        <p th:text="${mensagem}"></p>
+    </div>
+    <div th:if="${erro}" class="alert alert-danger" role="alert">
+        <p th:text="${erro}"></p>
+    </div>
+
+    <a th:href="@{/compras/nova}" class="btn btn-primary mb-3">Registrar Nova Compra</a>
+
+    <div class="table-responsive">
+        <table class="table table-striped table-bordered table-hover">
+            <thead class="thead-dark">
+            <tr>
+                <th>ID</th>
+                <th>Fornecedor</th>
+                <th>Valor Total</th>
+                <th>Data da Compra</th>
+                <th>Forma de Pagamento</th>
+                <th>Parcelas</th>
+                <th>Parcelas Pagas</th>
+                <th>Valor Parcela</th>
+                <th>Saldo Devedor</th>
+                <th>Ações</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="compra : ${compras}">
+                <td th:text="${compra.id}"></td>
+                <td th:text="${compra.fornecedor.nome}"></td>
+                <td th:text="${#numbers.formatCurrency(compra.valorTotal)}"></td>
+                <td th:text="${#temporals.format(compra.dataCompra, 'dd/MM/yyyy HH:mm')}"></td>
+                <td th:text="${compra.formaPagamento.descricao}"></td>
+                <td th:text="${compra.parcelas}"></td>
+                <td th:text="${compra.parcelasPagas}"></td>
+                <td th:text="${#numbers.formatCurrency(compra.valorParcela)}"></td>
+                <td>
+                            <span th:if="${compra.saldoDevedor.compareTo(T(java.math.BigDecimal).ZERO) > 0}"
+                                  th:text="${#numbers.formatCurrency(compra.saldoDevedor)}" class="badge badge-warning"></span>
+                    <span th:unless="${compra.saldoDevedor.compareTo(T(java.math.BigDecimal).ZERO) > 0}"
+                          class="badge badge-success">Pago</span>
+                </td>
+                <td>
+                    <a th:href="@{/compras/{id}(id=${compra.id})}" class="btn btn-info btn-sm btn-acao">Detalhes</a>
+                    <a th:href="@{/compras/excluir/{id}(id=${compra.id})}" class="btn btn-danger btn-sm btn-acao"
+                       onclick="return confirm('Tem certeza que deseja excluir esta compra? Isso reverterá o estoque dos produtos.');">Excluir</a>
+                </td>
+            </tr>
+            <tr th:if="${compras.empty}">
+                <td colspan="10" class="text-center">Nenhuma compra registrada.</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <a th:href="@{/}" class="btn btn-secondary mt-3">Voltar ao Início</a>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

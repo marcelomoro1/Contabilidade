@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Balanço Patrimonial</title>
+    <link rel="stylesheet" href="/css/style.css"> <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    h1, h2 { color: #333; }
+    table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+    th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+    th { background-color: #f2f2f2; }
+    tfoot td { font-weight: bold; background-color: #e9e9e9; }
+    .summary-box {
+        border: 1px solid #ccc;
+        padding: 15px;
+        margin-top: 20px;
+        background-color: #f9f9f9;
+    }
+    .summary-box p { margin: 5px 0; }
+    .balance-check { font-weight: bold; }
+    .balance-ok { color: green; }
+    .balance-fail { color: red; }
+</style>
+</head>
+<body>
+<h1>Balanço Patrimonial</h1>
+
+<div th:if="${balanco}">
+    <h2>Ativos (Bens e Direitos)</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>Descrição</th>
+            <th>Valor</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="item : ${balanco.bensDireitos}">
+            <td th:text="${item.descricao}"></td>
+            <td th:text="${#numbers.formatCurrency(item.valor)}"></td>
+        </tr>
+        </tbody>
+        <tfoot>
+        <tr>
+            <td><strong>Total de Ativos</strong></td>
+            <td th:text="${#numbers.formatCurrency(balanco.totalAtivos)}"></td>
+        </tr>
+        </tfoot>
+    </table>
+
+    <h2>Passivos (Obrigações)</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>Descrição</th>
+            <th>Valor</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="item : ${balanco.obrigacoes}">
+            <td th:text="${item.descricao}"></td>
+            <td th:text="${#numbers.formatCurrency(item.valor)}"></td>
+        </tr>
+        </tbody>
+        <tfoot>
+        <tr>
+            <td><strong>Total de Passivos</strong></td>
+            <td th:text="${#numbers.formatCurrency(balanco.totalPassivos)}"></td>
+        </tr>
+        </tfoot>
+    </table>
+
+    <h2>Patrimônio Líquido</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>Descrição</th>
+            <th>Valor</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="item : ${balanco.patrimonioLiquidoItems}">
+            <td th:text="${item.descricao}"></td>
+            <td th:text="${#numbers.formatCurrency(item.valor)}"></td>
+        </tr>
+        </tbody>
+        <tfoot>
+        <tr>
+            <td><strong>Total do Patrimônio Líquido</strong></td>
+            <td th:text="${#numbers.formatCurrency(balanco.patrimonioLiquido)}"></td>
+        </tr>
+        </tfoot>
+    </table>
+
+    <div class="summary-box">
+        <p><strong>Total de Ativos:</strong> <span th:text="${#numbers.formatCurrency(balanco.totalAtivos)}"></span></p>
+        <p><strong>Total de Passivos + Patrimônio Líquido:</strong> <span th:text="${#numbers.formatCurrency(balanco.totalPassivos.add(balanco.patrimonioLiquido))}"></span></p>
+        <p class="balance-check"
+           th:classappend="${balanco.totalAtivos.compareTo(balanco.totalPassivos.add(balanco.patrimonioLiquido)) == 0 ? 'balance-ok' : 'balance-fail'}">
+            <span th:if="${balanco.totalAtivos.compareTo(balanco.totalPassivos.add(balanco.patrimonioLiquido)) == 0}">Balanço OK! (Ativo = Passivo + PL)</span>
+            <span th:if="${balanco.totalAtivos.compareTo(balanco.totalPassivos.add(balanco.patrimonioLiquido)) != 0}">ATENÇÃO: Balanço não fecha! Diferença: <span th:text="${#numbers.formatCurrency(balanco.totalAtivos.subtract(balanco.totalPassivos.add(balanco.patrimonioLiquido)))}"></span></span>
+        </p>
+    </div>
+</div>
+<div th:unless="${balanco}">
+    <p>Não foi possível gerar o Balanço Patrimonial.</p>
+</div>
+</body>
+</html>
