@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controle de Caixa</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body { padding-top: 20px; }
+        .container { max-width: 1000px; }
+        .saldo-box { background-color: #e9f7ef; border: 1px solid #d4edda; border-radius: .25rem; padding: 15px; margin-bottom: 20px; }
+        .saldo-value { font-size: 1.8em; font-weight: bold; color: #28a745; }
+        .saida-value { color: #dc3545; }
+        .entrada-value { color: #28a745; }
+        .form-inline .form-group { margin-right: 15px; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1 class="text-center mb-4">Controle de Caixa</h1>
+
+    <div th:if="${mensagem}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <span th:text="${mensagem}"></span>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div th:if="${erro}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <span th:text="${erro}"></span>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="saldo-box text-center">
+                <h5>Saldo Atual do Caixa:</h5>
+                <p class="saldo-value" th:text="${#numbers.formatCurrency(saldoAtual)}">R$ 0,00</p>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="saldo-box text-center">
+                <h5>Saldo no Final do Período Selecionado:</h5>
+                <p class="saldo-value" th:text="${#numbers.formatCurrency(saldoNoFimDoPeriodo)}">R$ 0,00</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-4 shadow-sm">
+        <div class="card-header bg-info text-white">
+            Filtar Lançamentos
+        </div>
+        <div class="card-body">
+            <form th:action="@{/caixa}" method="get" class="form-inline justify-content-center">
+                <div class="form-group">
+                    <label for="dataInicio" class="mr-2">Data Início:</label>
+                    <input type="date" id="dataInicio" name="dataInicio" class="form-control" th:value="${dataInicio}">
+                </div>
+                <div class="form-group">
+                    <label for="dataFim" class="mr-2">Data Fim:</label>
+                    <input type="date" id="dataFim" name="dataFim" class="form-control" th:value="${dataFim}">
+                </div>
+                <button type="submit" class="btn btn-primary">Filtrar</button>
+                <a th:href="@{/caixa}" class="btn btn-secondary ml-2">Limpar Filtro</a>
+            </form>
+        </div>
+    </div>
+
+    <div class="card mb-4 shadow-sm">
+        <div class="card-header bg-success text-white">
+            Registrar Novo Lançamento
+        </div>
+        <div class="card-body">
+            <form th:action="@{/caixa/registrar}" th:object="${novoLancamento}" method="post">
+                <div class="form-row">
+                    <div class="form-group col-md-4">
+                        <label for="tipo">Tipo:</label>
+                        <select id="tipo" th:field="*{tipo}" class="form-control" required>
+                            <option value="">Selecione...</option>
+                            <option th:each="tipo : ${tiposLancamento}" th:value="${tipo}" th:text="${tipo.name()}"></option>
+                        </select>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="valor">Valor:</label>
+                        <input type="number" id="valor" th:field="*{valor}" class="form-control" step="0.01" min="0.01" required>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="descricao">Descrição:</label>
+                        <input type="text" id="descricao" th:field="*{descricao}" class="form-control" maxlength="255" required>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-success">Registrar Lançamento</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            Histórico de Lançamentos
+        </div>
+        <div class="card-body">
+            <div th:if="${lancamentos.isEmpty()}" class="alert alert-warning text-center">
+                Nenhum lançamento encontrado no período selecionado.
+            </div>
+            <div th:unless="${lancamentos.isEmpty()}">
+                <table class="table table-striped table-hover table-bordered">
+                    <thead class="thead-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Data/Hora</th>
+                        <th>Tipo</th>
+                        <th>Valor</th>
+                        <th>Descrição</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="lancamento : ${lancamentos}">
+                        <td th:text="${lancamento.id}"></td>
+                        <td th:text="${#temporals.format(lancamento.dataHora, 'dd/MM/yyyy HH:mm')}"></td>
+                        <td th:classappend="${lancamento.tipo == T(com.loja.model.enums.TipoLancamentoCaixa).ENTRADA ? 'entrada-value' : 'saida-value'}"
+                            th:text="${lancamento.tipo.name()}"></td>
+                        <td th:classappend="${lancamento.tipo == T(com.loja.model.enums.TipoLancamentoCaixa).ENTRADA ? 'entrada-value' : 'saida-value'}"
+                            th:text="${#numbers.formatCurrency(lancamento.valor)}"></td>
+                        <td th:text="${lancamento.descricao}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-4">
+        <a href="/" class="btn btn-secondary">Voltar para a Home</a>
+    </div>
+
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

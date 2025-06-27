@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${bem.id == null ? 'Novo Bem' : 'Editar Bem'}"></title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body { padding-top: 20px; }
+        .container { max-width: 800px; }
+        .form-row { margin-bottom: 1rem; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2 class="mb-4" th:text="${bem.id == null ? 'Cadastrar Novo Bem' : 'Editar Bem'}"></h2>
+
+    <div th:if="${erro}" class="alert alert-danger" role="alert">
+        <p th:text="${erro}"></p>
+    </div>
+    <div th:if="${mensagem}" class="alert alert-success" role="alert">
+        <p th:text="${mensagem}"></p>
+    </div>
+
+    <form th:action="@{/bens/salvar}" th:object="${bem}" method="post">
+        <input type="hidden" th:field="*{id}" />
+
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="nome">Nome:</label>
+                <input type="text" id="nome" th:field="*{nome}" class="form-control" required/>
+                <div class="text-danger" th:if="${#fields.hasErrors('nome')}" th:errors="*{nome}"></div>
+            </div>
+            <div class="form-group col-md-6">
+                <label for="tipoBem">Tipo de Bem:</label>
+                <select id="tipoBem" th:field="*{tipoBem}" class="form-control" required>
+                    <option value="">Selecione o Tipo</option>
+                    <option th:each="tipo : ${tiposBem}" th:value="${tipo}" th:text="${tipo.descricao}"></option>
+                </select>
+                <div class="text-danger" th:if="${#fields.hasErrors('tipoBem')}" th:errors="*{tipoBem}"></div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="descricao">Descrição:</label>
+            <textarea id="descricao" th:field="*{descricao}" class="form-control" rows="3" required></textarea>
+            <div class="text-danger" th:if="${#fields.hasErrors('descricao')}" th:errors="*{descricao}"></div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="valorAquisicao">Valor de Aquisição:</label>
+                <input type="number" id="valorAquisicao" th:field="*{valorAquisicao}" class="form-control" step="0.01" min="0" required/>
+                <div class="text-danger" th:if="${#fields.hasErrors('valorAquisicao')}" th:errors="*{valorAquisicao}"></div>
+            </div>
+            <div class="form-group col-md-6">
+                <label for="dataAquisicao">Data de Aquisição:</label>
+                <input type="date" id="dataAquisicao" th:field="*{dataAquisicao}" class="form-control" required/>
+                <div class="text-danger" th:if="${#fields.hasErrors('dataAquisicao')}" th:errors="*{dataAquisicao}"></div>
+            </div>
+        </div>
+
+        <hr/>
+        <h5>Informações de Pagamento (se a prazo)</h5>
+
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="valorEntrada">Valor de Entrada:</label>
+                <input type="number" id="valorEntrada" th:field="*{valorEntrada}" class="form-control" step="0.01" min="0"/>
+            </div>
+            <div class="form-group col-md-6">
+                <label for="parcelasTotais">Total de Parcelas:</label>
+                <input type="number" id="parcelasTotais" th:field="*{parcelasTotais}" class="form-control" min="0"/>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="dataVencimentoPrimeiraParcela">Data 1º Vencimento:</label>
+                <input type="date" id="dataVencimentoPrimeiraParcela" th:field="*{dataVencimentoPrimeiraParcela}" class="form-control"/>
+            </div>
+            <div class="form-group col-md-6">
+                <label for="fornecedorNome">Fornecedor:</label>
+                <input type="text" id="fornecedorNome" th:field="*{fornecedorNome}" class="form-control" placeholder="Nome do Fornecedor"/>
+                <input type="hidden" th:field="*{fornecedorId}" />
+            </div>
+        </div>
+
+        <input type="hidden" th:field="*{valorParcela}" />
+        <input type="hidden" th:field="*{parcelasPagas}" />
+
+
+        <button type="submit" class="btn btn-success mt-3">Salvar Bem</button>
+        <a th:href="@{/bens}" class="btn btn-secondary mt-3">Cancelar</a>
+    </form>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

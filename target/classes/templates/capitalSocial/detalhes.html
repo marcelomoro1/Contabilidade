@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Capital Social</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body { padding-top: 20px; }
+        .container { max-width: 900px; }
+        .card-capital { margin-bottom: 30px; }
+        .table-historico th, .table-historico td { vertical-align: middle; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1 class="mb-4">Capital Social</h1>
+
+    <div th:if="${mensagem}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <span th:text="${mensagem}"></span>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div th:if="${erro}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <span th:text="${erro}"></span>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div th:if="${info}" class="alert alert-info alert-dismissible fade show" role="alert">
+        <span th:text="${info}"></span>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+
+    <div class="card card-capital shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">Capital Social Atual (Último Registro)</h4>
+        </div>
+        <div class="card-body">
+            <div th:if="${capitalSocial.id != null}"> <p class="lead">
+                <strong>Valor de Abertura:</strong>
+                <span th:text="${#numbers.formatCurrency(capitalSocial.valorAbertura)}">R$ 0,00</span>
+            </p>
+                <p class="lead">
+                    <strong>Data de Abertura:</strong>
+                    <span th:text="${#temporals.format(capitalSocial.dataAbertura, 'dd/MM/yyyy')}">00/00/0000</span>
+                </p>
+            </div>
+            <div th:unless="${capitalSocial.id != null}" class="alert alert-warning">
+                Nenhum registro de Capital Social encontrado.
+            </div>
+            <a th:href="@{/capital-social/novo}" class="btn btn-success mt-3">Registrar Novo Capital Social</a>
+        </div>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-header bg-info text-white">
+            <h4 class="mb-0">Histórico de Registros do Capital Social</h4>
+        </div>
+        <div class="card-body">
+            <div th:if="${historicoCapital.isEmpty()}" class="alert alert-warning">
+                Nenhum registro no histórico.
+            </div>
+            <div th:unless="${historicoCapital.isEmpty()}">
+                <table class="table table-striped table-hover table-bordered table-historico">
+                    <thead class="thead-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Valor de Abertura</th>
+                        <th>Data de Abertura</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="registro : ${historicoCapital}">
+                        <td th:text="${registro.id}">1</td>
+                        <td th:text="${#numbers.formatCurrency(registro.valorAbertura)}">R$ 0,00</td>
+                        <td th:text="${#temporals.format(registro.dataAbertura, 'dd/MM/yyyy')}">00/00/0000</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-4">
+        <a href="/" class="btn btn-secondary">Voltar para a Home</a>
+    </div>
+
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
