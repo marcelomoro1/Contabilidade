@@ -19,7 +19,7 @@
 
 ## 🚀 Sobre o Projeto
 
-O Projeto é uma aplicação web desenvolvida para gerenciar operações comerciais de uma loja, incluindo vendas, clientes, fornecedores e produtos. O sistema permite o controle de estoque, registro de vendas, cadastro de clientes e fornecedores.
+O Projeto é uma aplicação web desenvolvida para gerenciar operações comerciais de uma loja, incluindo vendas, clientes, fornecedores e produtos. O sistema permite o controle de estoque, registro de vendas, cadastro de clientes, fornecedores e relatórios sobre a contabilidade da empresa
 
 ## ✨ Funcionalidades
 
@@ -48,6 +48,12 @@ O Projeto é uma aplicação web desenvolvida para gerenciar operações comerci
 - Visualização de detalhes da venda
 - Exclusão de vendas
 
+### Contabilidade
+- Balanço Patrimonial: Visualização do Balanço Patrimonial com Ativos (Caixa e Equivalentes, Estoque de Produtos), Passivos (Contas a Pagar Fornecedores) e Patrimônio Líquido (Capital Social, Lucros/Prejuízos Acumulados).
+- Caixa: Controle de entradas e saídas de dinheiro, e visualização do saldo atual do caixa.
+- Bens (Patrimônio): Listagem de bens com ID, Nome, Descrição, Tipo, Valor de Aquisição, Data de Aquisição, Valor de Entrada, Parcelas Totais, Parcelas Pagas, Valor da Parcela, Data do 1º Vencimento, Fornecedor e Saldo Devedor. Permite cadastrar novos itens.
+
+Capital Social: Registro e histórico do Capital Social da empresa.
 ## 🛠 Tecnologias Utilizadas
 
 - **Backend:**
