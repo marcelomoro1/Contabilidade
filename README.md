@@ -52,8 +52,8 @@ O Projeto é uma aplicação web desenvolvida para gerenciar operações comerci
 - Balanço Patrimonial: Visualização do Balanço Patrimonial com Ativos (Caixa e Equivalentes, Estoque de Produtos), Passivos (Contas a Pagar Fornecedores) e Patrimônio Líquido (Capital Social, Lucros/Prejuízos Acumulados).
 - Caixa: Controle de entradas e saídas de dinheiro, e visualização do saldo atual do caixa.
 - Bens (Patrimônio): Listagem de bens com ID, Nome, Descrição, Tipo, Valor de Aquisição, Data de Aquisição, Valor de Entrada, Parcelas Totais, Parcelas Pagas, Valor da Parcela, Data do 1º Vencimento, Fornecedor e Saldo Devedor. Permite cadastrar novos itens.
-
-Capital Social: Registro e histórico do Capital Social da empresa.
+- Capital Social: Registro e histórico do Capital Social da empresa.
+  
 ## 🛠 Tecnologias Utilizadas
 
 - **Backend:**
