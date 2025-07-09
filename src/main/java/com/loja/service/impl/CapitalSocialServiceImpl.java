@@ -32,7 +32,6 @@ public class CapitalSocialServiceImpl implements CapitalSocialService {
 
 
         try {
-
             LancamentoCaixa lancamentoCaixa = new LancamentoCaixa();
             lancamentoCaixa.setTipo(TipoLancamentoCaixa.ENTRADA);
             lancamentoCaixa.setValor(capitalSalvo.getValorAbertura()); // Pega o valor do Capital Social que acabou de ser salvo
@@ -41,7 +40,6 @@ public class CapitalSocialServiceImpl implements CapitalSocialService {
 
             // Salva o lançamento no caixa usando o CaixaService
             caixaService.registrarLancamento(lancamentoCaixa);
-            System.out.println("DEBUG: Entrada de Capital Social de R$" + capitalSalvo.getValorAbertura() + " registrada no Caixa.");
 
         } catch (Exception e) {
             System.err.println("ERRO: Falha ao registrar a entrada do Capital Social no Caixa: " + e.getMessage());

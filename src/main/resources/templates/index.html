@@ -108,14 +108,14 @@
         <div class="col-6 col-md-3">
             <div class="stats-card">
                 <div class="small">Faturamento Hoje</div>
-                <div class="stats-number" th:text="${faturamento != null ? #numbers.formatCurrency(faturamento) : #numbers.formatCurrency(0.00)}">R$ 0,00</div>
+                <div class="stats-number" th:text="${#numbers.formatCurrency(faturamento)}">R$ 0,00</div>
 
             </div>
         </div>
         <div class="col-6 col-md-3">
             <div class="stats-card">
                 <div class="small"><i class="bi bi-cash-coin"></i> Caixa</div>
-                <div class="stats-number" th:text="${valorCaixa != null ? #numbers.formatCurrency(valorCaixa) : #numbers.formatCurrency(0.00)}">R$ 0,00</div>
+                <div class="stats-number" th:text="${#numbers.formatCurrency(valorCaixa)}">R$ 0,00</div>
 
             </div>
         </div>

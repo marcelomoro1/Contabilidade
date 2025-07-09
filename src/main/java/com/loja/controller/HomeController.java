@@ -47,12 +47,15 @@ public class HomeController {
         Long totalClientes = clienteService.countClientes();
         model.addAttribute("totalClientes", totalClientes);
 
-        BigDecimal saldoCaixaAtual = caixaService.calcularSaldoAtual();
+        BigDecimal valorCaixa = caixaService.calcularSaldoAtual();
 
-        if (saldoCaixaAtual == null) {
-            saldoCaixaAtual = BigDecimal.ZERO;
+        if (valorCaixa == null) {
+            valorCaixa = BigDecimal.ZERO;
         }
-        model.addAttribute("saldoCaixaAtual", saldoCaixaAtual);
+        
+
+        
+        model.addAttribute("valorCaixa", valorCaixa);
 
 
         return "index";
