@@ -4,34 +4,92 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Controle de Caixa</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <style>
-        body { padding-top: 20px; }
-        .container { max-width: 1000px; }
-        .saldo-box { background-color: #e9f7ef; border: 1px solid #d4edda; border-radius: .25rem; padding: 15px; margin-bottom: 20px; }
-        .saldo-value { font-size: 1.8em; font-weight: bold; color: #28a745; }
-        .saida-value { color: #dc3545; }
-        .entrada-value { color: #28a745; }
-        .form-inline .form-group { margin-right: 15px; }
+        body {
+            background: linear-gradient(135deg, #e3f0ff 0%, #f8fbff 100%);
+            min-height: 100vh;
+            color: #1a237e;
+        }
+        .navbar {
+            background: linear-gradient(90deg, #1565c0 0%, #42a5f5 100%);
+        }
+        .navbar-brand, .nav-link, .navbar-toggler-icon {
+            color: #fff !important;
+        }
+        .main-title {
+            font-weight: 700;
+            color: #1976d2;
+            letter-spacing: 1px;
+        }
+        .card {
+            border: none;
+            border-radius: 1rem;
+            box-shadow: 0 2px 8px rgba(33, 150, 243, 0.08);
+        }
+        .btn-primary, .btn-info, .btn-warning, .btn-danger, .btn-secondary, .btn-success {
+            border-radius: 2rem;
+        }
+        .table {
+            border-radius: 1rem;
+            overflow: hidden;
+            background: #fff;
+        }
+        .footer {
+            background: #e3f2fd;
+            color: #1976d2;
+            border-top: 1px solid #bbdefb;
+        }
+        .saldo-box {
+            background-color: #e3f2fd;
+            border: 1px solid #bbdefb;
+            border-radius: 1rem;
+            padding: 18px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(33, 150, 243, 0.06);
+        }
+        .saldo-value {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #1976d2;
+        }
+        .saida-value { color: #d32f2f; font-weight: 600; }
+        .entrada-value { color: #388e3c; font-weight: 600; }
     </style>
 </head>
 <body>
-<div class="container">
-    <h1 class="text-center mb-4">Controle de Caixa</h1>
-
+<nav class="navbar navbar-expand-lg">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/">Loja</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link" href="/vendas">Vendas</a></li>
+                <li class="nav-item"><a class="nav-link" href="/fornecedores">Fornecedores</a></li>
+                <li class="nav-item"><a class="nav-link" href="/clientes">Clientes</a></li>
+                <li class="nav-item"><a class="nav-link" href="/produtos">Produtos</a></li>
+                <li class="nav-item"><a class="nav-link" href="/bens">Bens</a></li>
+                <li class="nav-item"><a class="nav-link" href="/capital-social">Capital Social</a></li>
+                <li class="nav-item"><a class="nav-link" href="/compras">Compras</a></li>
+                <li class="nav-item"><a class="nav-link" href="/balanco-patrimonial">Balanço Patrimonial</a></li>
+                <li class="nav-item"><a class="nav-link active" href="/caixa">Caixa</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<div class="container my-5">
+    <h2 class="main-title text-center mb-4"><i class="bi bi-cash-coin"></i> Controle de Caixa</h2>
     <div th:if="${mensagem}" class="alert alert-success alert-dismissible fade show" role="alert">
         <span th:text="${mensagem}"></span>
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
     <div th:if="${erro}" class="alert alert-danger alert-dismissible fade show" role="alert">
         <span th:text="${erro}"></span>
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
-
     <div class="row mb-4">
         <div class="col-md-6">
             <div class="saldo-box text-center">
@@ -46,98 +104,103 @@
             </div>
         </div>
     </div>
-
-    <div class="card mb-4 shadow-sm">
-        <div class="card-header bg-info text-white">
-            Filtar Lançamentos
+    <div class="card mb-4">
+        <div class="card-header bg-white border-0 pb-0">
+            <span class="main-title"><i class="bi bi-funnel"></i> Filtrar Lançamentos</span>
         </div>
         <div class="card-body">
-            <form th:action="@{/caixa}" method="get" class="form-inline justify-content-center">
-                <div class="form-group">
-                    <label for="dataInicio" class="mr-2">Data Início:</label>
+            <form th:action="@{/caixa}" method="get" class="row g-3 align-items-end justify-content-center">
+                <div class="col-auto">
+                    <label for="dataInicio" class="form-label">Data Início</label>
                     <input type="date" id="dataInicio" name="dataInicio" class="form-control" th:value="${dataInicio}">
                 </div>
-                <div class="form-group">
-                    <label for="dataFim" class="mr-2">Data Fim:</label>
+                <div class="col-auto">
+                    <label for="dataFim" class="form-label">Data Fim</label>
                     <input type="date" id="dataFim" name="dataFim" class="form-control" th:value="${dataFim}">
                 </div>
-                <button type="submit" class="btn btn-primary">Filtrar</button>
-                <a th:href="@{/caixa}" class="btn btn-secondary ml-2">Limpar Filtro</a>
+                <div class="col-auto">
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-funnel"></i> Filtrar</button>
+                </div>
+                <div class="col-auto">
+                    <a th:href="@{/caixa}" class="btn btn-secondary"><i class="bi bi-x-circle"></i> Limpar Filtro</a>
+                </div>
             </form>
         </div>
     </div>
-
-    <div class="card mb-4 shadow-sm">
-        <div class="card-header bg-success text-white">
-            Registrar Novo Lançamento
+    <div class="card mb-4">
+        <div class="card-header bg-white border-0 pb-0">
+            <span class="main-title"><i class="bi bi-plus-circle"></i> Registrar Novo Lançamento</span>
         </div>
         <div class="card-body">
             <form th:action="@{/caixa/registrar}" th:object="${novoLancamento}" method="post">
-                <div class="form-row">
-                    <div class="form-group col-md-4">
-                        <label for="tipo">Tipo:</label>
+                <div class="row g-3 align-items-end">
+                    <div class="col-md-4">
+                        <label for="tipo" class="form-label">Tipo</label>
                         <select id="tipo" th:field="*{tipo}" class="form-control" required>
                             <option value="">Selecione...</option>
                             <option th:each="tipo : ${tiposLancamento}" th:value="${tipo}" th:text="${tipo.name()}"></option>
                         </select>
                     </div>
-                    <div class="form-group col-md-4">
-                        <label for="valor">Valor:</label>
+                    <div class="col-md-4">
+                        <label for="valor" class="form-label">Valor</label>
                         <input type="number" id="valor" th:field="*{valor}" class="form-control" step="0.01" min="0.01" required>
                     </div>
-                    <div class="form-group col-md-4">
-                        <label for="descricao">Descrição:</label>
+                    <div class="col-md-4">
+                        <label for="descricao" class="form-label">Descrição</label>
                         <input type="text" id="descricao" th:field="*{descricao}" class="form-control" maxlength="255" required>
                     </div>
                 </div>
-                <button type="submit" class="btn btn-success">Registrar Lançamento</button>
+                <div class="d-grid gap-2 mt-3">
+                    <button type="submit" class="btn btn-success"><i class="bi bi-save"></i> Registrar Lançamento</button>
+                </div>
             </form>
         </div>
     </div>
-
-    <div class="card shadow-sm">
-        <div class="card-header bg-primary text-white">
-            Histórico de Lançamentos
+    <div class="card">
+        <div class="card-header bg-white border-0 pb-0">
+            <span class="main-title"><i class="bi bi-journal-text"></i> Histórico de Lançamentos</span>
         </div>
         <div class="card-body">
             <div th:if="${lancamentos.isEmpty()}" class="alert alert-warning text-center">
                 Nenhum lançamento encontrado no período selecionado.
             </div>
             <div th:unless="${lancamentos.isEmpty()}">
-                <table class="table table-striped table-hover table-bordered">
-                    <thead class="thead-dark">
-                    <tr>
-                        <th>ID</th>
-                        <th>Data/Hora</th>
-                        <th>Tipo</th>
-                        <th>Valor</th>
-                        <th>Descrição</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr th:each="lancamento : ${lancamentos}">
-                        <td th:text="${lancamento.id}"></td>
-                        <td th:text="${#temporals.format(lancamento.dataHora, 'dd/MM/yyyy HH:mm')}"></td>
-                        <td th:classappend="${lancamento.tipo == T(com.loja.model.enums.TipoLancamentoCaixa).ENTRADA ? 'entrada-value' : 'saida-value'}"
-                            th:text="${lancamento.tipo.name()}"></td>
-                        <td th:classappend="${lancamento.tipo == T(com.loja.model.enums.TipoLancamentoCaixa).ENTRADA ? 'entrada-value' : 'saida-value'}"
-                            th:text="${#numbers.formatCurrency(lancamento.valor)}"></td>
-                        <td th:text="${lancamento.descricao}"></td>
-                    </tr>
-                    </tbody>
-                </table>
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover align-middle">
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Data/Hora</th>
+                            <th>Tipo</th>
+                            <th>Valor</th>
+                            <th>Descrição</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="lancamento : ${lancamentos}">
+                            <td th:text="${lancamento.id}"></td>
+                            <td th:text="${#temporals.format(lancamento.dataHora, 'dd/MM/yyyy HH:mm')}"></td>
+                            <td th:classappend="${lancamento.tipo == T(com.loja.model.enums.TipoLancamentoCaixa).ENTRADA ? 'entrada-value' : 'saida-value'}"
+                                th:text="${lancamento.tipo.name()}"></td>
+                            <td th:classappend="${lancamento.tipo == T(com.loja.model.enums.TipoLancamentoCaixa).ENTRADA ? 'entrada-value' : 'saida-value'}"
+                                th:text="${#numbers.formatCurrency(lancamento.valor)}"></td>
+                            <td th:text="${lancamento.descricao}"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
-
     <div class="text-center mt-4">
-        <a href="/" class="btn btn-secondary">Voltar para a Home</a>
+        <a href="/" class="btn btn-secondary"><i class="bi bi-house-door"></i> Voltar para a Home</a>
     </div>
-
 </div>
-
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<footer class="footer py-3 mt-auto">
+    <div class="container text-center">
+        <small>&copy; 2024 Loja - Sistema de Contabilidade.</small>
+    </div>
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

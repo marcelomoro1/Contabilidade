@@ -71,12 +71,8 @@
                         <p><strong>ID:</strong> <span th:text="${produto.id}"></span></p>
                         <p><strong>Nome:</strong> <span th:text="${produto.nome}"></span></p>
                         <p><strong>Descrição:</strong> <span th:text="${produto.descricao}"></span></p>
-                        <p><strong>Preço de Compra:</strong> <span th:text="${'R$ ' + #numbers.formatDecimal(produto.precoCompra, 1, 2)}"></span></p>
-                        <p><strong>Preço de Venda:</strong> <span th:text="${'R$ ' + #numbers.formatDecimal(produto.precoVenda, 1, 2)}"></span></p>
                     </div>
                     <div class="col-md-6">
-                        <p><strong>Crédito ICMS:</strong> <span th:text="${'R$ ' + #numbers.formatDecimal(produto.creditoIcms, 1, 2)}"></span></p>
-                        <p><strong>Débito ICMS:</strong> <span th:text="${'R$ ' + #numbers.formatDecimal(produto.debitoIcms, 1, 2)}"></span></p>
                         <p><strong>Quantidade em Estoque:</strong> <span th:text="${produto.quantidade}"></span></p>
                         <p><strong>Custo Total:</strong> <span th:text="${'R$ ' + #numbers.formatDecimal(produto.custoTotal, 1, 2)}"></span></p>
                         <p><strong>Lucro Total:</strong> <span th:text="${'R$ ' + #numbers.formatDecimal(produto.lucroTotal, 1, 2)}"></span></p>

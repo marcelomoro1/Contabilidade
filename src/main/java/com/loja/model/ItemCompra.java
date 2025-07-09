@@ -25,6 +25,9 @@ public class ItemCompra {
     @Column(name = "valor_total")
     private BigDecimal valorTotal; // Quantidade * PrecoUnitarioCompra
 
+    @Column(name = "credito_icms", precision = 10, scale = 2)
+    private BigDecimal creditoIcms;
+
     // Getters e Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -38,4 +41,6 @@ public class ItemCompra {
     public void setPrecoUnitarioCompra(BigDecimal precoUnitarioCompra) { this.precoUnitarioCompra = precoUnitarioCompra; }
     public BigDecimal getValorTotal() { return valorTotal; }
     public void setValorTotal(BigDecimal valorTotal) { this.valorTotal = valorTotal; }
+    public BigDecimal getCreditoIcms() { return creditoIcms; }
+    public void setCreditoIcms(BigDecimal creditoIcms) { this.creditoIcms = creditoIcms; }
 }

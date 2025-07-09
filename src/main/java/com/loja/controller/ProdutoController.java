@@ -54,7 +54,7 @@ public class ProdutoController {
     @PostMapping("/salvar")
     public String salvarProduto(@Valid @ModelAttribute Produto produto, BindingResult result, RedirectAttributes redirectAttributes, Model model) {
         if (result.hasErrors()) {
-            return "produtos/form"; // Retorna para o formulário com os erros de validação
+            return "produtos/form";
         }
         try {
             produtoService.salvar(produto);

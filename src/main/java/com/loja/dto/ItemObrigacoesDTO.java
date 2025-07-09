@@ -11,7 +11,7 @@ public class ItemObrigacoesDTO {
         this.valor = valor;
     }
 
-    // Construtor padrão para JPA/Jackson, se necessário
+
     public ItemObrigacoesDTO() {
     }
 

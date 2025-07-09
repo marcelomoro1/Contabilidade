@@ -29,27 +29,20 @@ public class VendaServiceImpl implements VendaService {
     @Override
     @Transactional
     public Venda salvar(Venda venda) {
-        // A dataVenda já está sendo setada no construtor de Venda ou no Controller.
-        // Se a venda já tem ID, significa que é uma atualização e a data não deve ser alterada.
         if (venda.getId() == null && venda.getDataVenda() == null) {
             venda.setDataVenda(LocalDateTime.now());
         }
 
-        // Garante a associação bidirecional e calcula o valor total dos itens
-        // O valorTotal da Venda agora é calculado pelo getter Venda.getValorTotal()
-        // que soma os subtotais dos itens.
-        // Não precisamos mais de `totalItens` no Service para setar o valorTotal da Venda.
-
-        // Validação e atualização de estoque para CADA item da venda
+        //Validação e atualização de estoque para CADA item da venda
         if (venda.getItensVenda().isEmpty()) {
             throw new IllegalArgumentException("A venda deve conter pelo menos um item.");
         }
 
         for (ItemVenda item : venda.getItensVenda()) {
-            // Garante a associação bidirecional (se já não foi feita no controller ou construtor)
+            //Garante a associação bidirecional
             item.setVenda(venda);
 
-            // Buscar o produto para garantir que está no estado gerenciado e atualizar estoque
+            //Buscar o produto para garantir que está no estado gerenciado e atualizar estoque
             Produto produto = produtoRepository.findById(item.getProduto().getId())
                     .orElseThrow(() -> new RuntimeException("Produto não encontrado ao salvar venda: ID " + item.getProduto().getId()));
 
@@ -57,20 +50,16 @@ public class VendaServiceImpl implements VendaService {
                 throw new RuntimeException("Estoque insuficiente para o produto: " + produto.getNome() + ". Quantidade em estoque: " + produto.getQuantidade() + ", Quantidade solicitada: " + item.getQuantidade());
             }
 
-            // Atualiza o estoque do produto
+            //Atualiza o estoque do produto
             produto.setQuantidade(produto.getQuantidade() - item.getQuantidade());
-            produtoRepository.save(produto); // Salva a atualização do estoque
+            produtoRepository.save(produto);
 
-            // O preço unitário do item de venda deve ser o preço de venda do produto no momento da venda
-            item.setPrecoUnitario(produto.getPrecoVenda());
+            //Definir preço unitário e débito ICMS na venda
+            item.setPrecoUnitario(item.getPrecoUnitario());
+            BigDecimal debitoIcms = item.getPrecoUnitario().multiply(BigDecimal.valueOf(0.17)).multiply(BigDecimal.valueOf(item.getQuantidade()));
+            item.setDebitoIcms(debitoIcms);
         }
 
-        // Define o valorTotal da Venda através do getter que calcula a soma dos itens
-        // É importante chamar o getter para que o valor seja calculado antes de salvar.
-        // Como o getValorTotal() já faz o cálculo, não precisamos de um setValorTotal aqui
-        // a não ser que você queira persistir um campo valorTotal (o que já está na sua Venda).
-        // Se o @Column na Venda tiver o nome "valor_total", e o getter for getValorTotal(),
-        // o JPA vai mapear automaticamente.
 
         // Lógica para parcelamento
         if (venda.getFormaPagamento() == com.loja.model.enums.FormaPagamento.APRAZO) {
@@ -79,13 +68,13 @@ public class VendaServiceImpl implements VendaService {
             }
             // Valor da parcela calculado com base no valor total da venda
             venda.setValorParcela(venda.getValorTotal().divide(BigDecimal.valueOf(venda.getParcelas()), 2, RoundingMode.HALF_UP));
-            venda.setParcelasPagas(0); // Venda a prazo inicia com 0 parcelas pagas
-            venda.setSaldoAReceber(venda.getValorTotal()); // Inicializa saldo a receber
+            venda.setParcelasPagas(0);// Venda a prazo inicia com 0 parcelas pagas
+            venda.setSaldoAReceber(venda.getValorTotal());// Inicializa saldo a receber
         } else {
             venda.setParcelas(1);
-            venda.setParcelasPagas(1); // Venda à vista já está paga
-            venda.setValorParcela(venda.getValorTotal()); // Parcela única é o valor total
-            venda.setSaldoAReceber(BigDecimal.ZERO); // Saldo a receber é zero para venda à vista
+            venda.setParcelasPagas(1);// Venda à vista já está paga
+            venda.setValorParcela(venda.getValorTotal());// Parcela única é o valor total
+            venda.setSaldoAReceber(BigDecimal.ZERO);// Saldo a receber é zero para venda à vista
         }
 
         return vendaRepository.save(venda);

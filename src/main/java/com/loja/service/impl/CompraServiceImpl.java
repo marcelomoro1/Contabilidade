@@ -38,13 +38,21 @@ public class CompraServiceImpl implements CompraService {
 
         for (ItemCompra item : compra.getItensCompra()) {
             item.setCompra(compra);
+            Produto produto = null;
+            if (item.getProduto() != null && item.getProduto().getId() != null) {
+                produto = produtoRepository.findById(item.getProduto().getId())
+                        .orElseThrow(() -> new IllegalArgumentException("Produto não encontrado ao salvar compra: " + item.getProduto().getId()));
+                item.setProduto(produto);
+            } else {
+                throw new IllegalArgumentException("Produto não selecionado para um dos itens da compra.");
+            }
             item.setValorTotal(item.getPrecoUnitarioCompra().multiply(BigDecimal.valueOf(item.getQuantidade())));
             totalItens = totalItens.add(item.getValorTotal());
 
-            Produto produto = produtoRepository.findById(item.getProduto().getId())
-                    .orElseThrow(() -> new IllegalArgumentException("Produto não encontrado ao salvar compra: " + item.getProduto().getId()));
+            // Calcular crédito de ICMS (17% do valor total do item)
+            BigDecimal creditoIcms = item.getPrecoUnitarioCompra().multiply(BigDecimal.valueOf(item.getQuantidade())).multiply(BigDecimal.valueOf(0.17));
+            item.setCreditoIcms(creditoIcms);
 
-            // --- CORREÇÃO AQUI: USANDO getQuantidade() e setQuantidade() ---
             produto.setQuantidade(produto.getQuantidade() + item.getQuantidade());
             produtoRepository.save(produto);
         }
@@ -55,8 +63,25 @@ public class CompraServiceImpl implements CompraService {
             if (compra.getParcelas() == null || compra.getParcelas() <= 0) {
                 throw new IllegalArgumentException("Número de parcelas inválido para compra a prazo. Deve ser maior que zero.");
             }
-            compra.setValorParcela(compra.getValorTotal().divide(BigDecimal.valueOf(compra.getParcelas()), BigDecimal.ROUND_HALF_UP));
+            
+            // Cálculo das parcelas
+            BigDecimal valorParcelaBase = compra.getValorTotal().divide(BigDecimal.valueOf(compra.getParcelas()), 2, BigDecimal.ROUND_DOWN);
+            BigDecimal valorTotalParcelasBase = valorParcelaBase.multiply(BigDecimal.valueOf(compra.getParcelas()));
+            BigDecimal diferenca = compra.getValorTotal().subtract(valorTotalParcelasBase);
+            
+            // Salva o valor base como valor da parcela padrão
+            compra.setValorParcela(valorParcelaBase);
             compra.setParcelasPagas(0);
+            
+            // Log para debug
+            System.out.println("=== DEBUG CÁLCULO PARCELAS ===");
+            System.out.println("Valor Total: " + compra.getValorTotal());
+            System.out.println("Número de Parcelas: " + compra.getParcelas());
+            System.out.println("Valor Parcela Base: " + valorParcelaBase);
+            System.out.println("Valor Total Parcelas Base: " + valorTotalParcelasBase);
+            System.out.println("Diferença: " + diferenca);
+            System.out.println("Valor Última Parcela: " + valorParcelaBase.add(diferenca));
+            System.out.println("=============================");
         } else { // À VISTA
             compra.setParcelas(1);
             compra.setParcelasPagas(1);
@@ -76,7 +101,6 @@ public class CompraServiceImpl implements CompraService {
             Produto produto = produtoRepository.findById(item.getProduto().getId())
                     .orElseThrow(() -> new IllegalArgumentException("Produto não encontrado ao reverter estoque para exclusão da compra: " + item.getProduto().getId()));
 
-            // --- CORREÇÃO AQUI: USANDO getQuantidade() e setQuantidade() ---
             produto.setQuantidade(produto.getQuantidade() - item.getQuantidade());
             produtoRepository.save(produto);
         });
@@ -106,7 +130,6 @@ public class CompraServiceImpl implements CompraService {
             throw new IllegalArgumentException("Não é possível registrar pagamento para uma compra que não é a prazo.");
         }
 
-        // Usar o getter para verificar o saldo devedor atual
         if (compra.getSaldoDevedor().compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("Esta compra já está totalmente paga.");
         }
@@ -115,22 +138,38 @@ public class CompraServiceImpl implements CompraService {
             throw new IllegalArgumentException("O valor a pagar deve ser maior que zero.");
         }
 
-        // Calcula o valor total já pago (considerando pagamentos anteriores)
-        BigDecimal valorTotalPagoAteAgora = compra.getValorTotal().subtract(compra.getSaldoDevedor());
+        // Verificar se o valor pago não excede o saldo devedor
+        if (valorPago.compareTo(compra.getSaldoDevedor()) > 0) {
+            throw new IllegalArgumentException("O valor pago não pode exceder o saldo devedor de " + compra.getSaldoDevedor());
+        }
+
+        // Calcular quantas parcelas o valor pago representa
+        BigDecimal valorTotalPagoAteAgora = compra.getValorParcela().multiply(BigDecimal.valueOf(compra.getParcelasPagas() != null ? compra.getParcelasPagas() : 0));
         BigDecimal novoValorTotalPago = valorTotalPagoAteAgora.add(valorPago);
-
-        // Se a compra tem parcelas definidas (e valorParcela)
-        if (compra.getValorParcela() != null && compra.getValorParcela().compareTo(BigDecimal.ZERO) > 0 && compra.getParcelas() != null && compra.getParcelas() > 0) {
-            int novasParcelasPagas = novoValorTotalPago.divide(compra.getValorParcela(), BigDecimal.ROUND_DOWN).intValue();
-
-            compra.setParcelasPagas(Math.min(compra.getParcelas(), novasParcelasPagas));
-        } else {
-            // Caso de fallback: Se o pagamento for suficiente para cobrir o valor total, marca todas as parcelas como pagas.
-            if (compra.getSaldoDevedor().compareTo(valorPago) <= 0) {
-                compra.setParcelasPagas(compra.getParcelas());
-            }
+        
+        // Calcular quantas parcelas foram pagas no total
+        int novasParcelasPagas = novoValorTotalPago.divide(compra.getValorParcela(), BigDecimal.ROUND_DOWN).intValue();
+        
+        // Garantir que não exceda o número total de parcelas
+        novasParcelasPagas = Math.min(compra.getParcelas(), novasParcelasPagas);
+        
+        compra.setParcelasPagas(novasParcelasPagas);
+        
+        // Se o saldo devedor for zero ou negativo após o pagamento, marcar como totalmente paga
+        BigDecimal saldoAposPagamento = compra.getValorTotal().subtract(novoValorTotalPago);
+        if (saldoAposPagamento.compareTo(BigDecimal.ZERO) <= 0) {
+            compra.setParcelasPagas(compra.getParcelas());
         }
 
         compraRepository.save(compra);
+        
+        // Log para debug
+        System.out.println("=== DEBUG PAGAMENTO ===");
+        System.out.println("Valor Pago: " + valorPago);
+        System.out.println("Valor Total Pago Até Agora: " + novoValorTotalPago);
+        System.out.println("Novas Parcelas Pagas: " + novasParcelasPagas);
+        System.out.println("Saldo Após Pagamento: " + saldoAposPagamento);
+        System.out.println("Saldo Devedor Final: " + compra.getSaldoDevedor());
+        System.out.println("=======================");
     }
 }

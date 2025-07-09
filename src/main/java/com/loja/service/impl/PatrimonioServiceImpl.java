@@ -24,7 +24,7 @@ public class PatrimonioServiceImpl implements PatrimonioService {
         if (patrimonio.getValorUnitario() != null && patrimonio.getQuantidade() != null) {
             patrimonio.setValorTotal(patrimonio.getValorUnitario().multiply(BigDecimal.valueOf(patrimonio.getQuantidade())));
         } else {
-            patrimonio.setValorTotal(BigDecimal.ZERO); // Ou lance uma exceção, se esses campos forem obrigatórios
+            patrimonio.setValorTotal(BigDecimal.ZERO);
         }
         return patrimonioRepository.save(patrimonio);
     }

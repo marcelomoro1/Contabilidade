@@ -18,14 +18,14 @@ public class CapitalSocialController {
     private CapitalSocialService capitalSocialService;
 
     @GetMapping
-    public String exibirCapitalSocial(Model model, RedirectAttributes redirectAttributes) { // Adicionado RedirectAttributes
+    public String exibirCapitalSocial(Model model, RedirectAttributes redirectAttributes) { // RedirectAttributes
         try {
-            // Se buscarUltimoCapitalSocial() pode retornar vazio e você quer uma mensagem
+            // Se buscarUltimoCapitalSocial() retornar vazio
             Optional<CapitalSocial> ultimoCapital = capitalSocialService.buscarUltimoCapitalSocial();
             if (ultimoCapital.isPresent()) {
                 model.addAttribute("capitalSocial", ultimoCapital.get());
             } else {
-                model.addAttribute("capitalSocial", new CapitalSocial()); // Ou deixe vazio para o template lidar
+                model.addAttribute("capitalSocial", new CapitalSocial());
                 model.addAttribute("info", "Nenhum registro de Capital Social encontrado. Comece adicionando um novo.");
             }
             model.addAttribute("historicoCapital", capitalSocialService.listarTodos());
@@ -50,35 +50,10 @@ public class CapitalSocialController {
             return "redirect:/capital-social";
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("erro", "Erro ao registrar Capital Social: " + e.getMessage());
-            // Se houver erros de validação no CapitalSocial (com @Valid), você retornaria para "capitalSocial/form"
+
             redirectAttributes.addFlashAttribute("capitalSocial", capitalSocial); // Mantém os dados no formulário
             return "redirect:/capital-social/novo"; // Redireciona para o formulário (mas perde dados flash)
-            // Alternativa melhor para erro de validação: return "capitalSocial/form"; com @Valid e BindingResult
         }
     }
 
-    // Opcional: Adicionar endpoints de edição e exclusão se necessário
-    /*
-    @GetMapping("/editar/{id}")
-    public String editarCapitalSocial(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
-        try {
-            model.addAttribute("capitalSocial", capitalSocialService.buscarPorId(id));
-            return "capitalSocial/form";
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("erro", "Registro de Capital Social não encontrado para edição: " + e.getMessage());
-            return "redirect:/capital-social";
-        }
-    }
-
-    @GetMapping("/excluir/{id}")
-    public String excluirCapitalSocial(@PathVariable Long id, RedirectAttributes redirectAttributes) {
-        try {
-            capitalSocialService.deletar(id);
-            redirectAttributes.addFlashAttribute("mensagem", "Registro de Capital Social excluído com sucesso!");
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("erro", "Erro ao excluir registro de Capital Social: " + e.getMessage());
-        }
-        return "redirect:/capital-social";
-    }
-    */
 }

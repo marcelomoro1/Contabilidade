@@ -10,9 +10,9 @@ public class BalancoPatrimonialDTO {
     private BigDecimal patrimonioLiquido;
     private List<ItemBensDireitosDTO> bensDireitos; // Lista de ativos detalhados
     private List<ItemObrigacoesDTO> obrigacoes;     // Lista de passivos detalhados
-    private List<ItemBensDireitosDTO> patrimonioLiquidoItems; // Para detalhar PL (ex: capital social, lucros acumulados)
+    private List<ItemBensDireitosDTO> patrimonioLiquidoItems;
 
-    // Construtor padrão para garantir que as listas não sejam null
+
     public BalancoPatrimonialDTO() {
         this.totalAtivos = BigDecimal.ZERO;
         this.totalPassivos = BigDecimal.ZERO;

@@ -64,7 +64,7 @@ public class FornecedorController {
             redirectAttributes.addFlashAttribute("erro", "Erro ao salvar fornecedor: " + e.getMessage());
             // Mantém o objeto no flash para repopular o formulário em caso de erro de negócio
             redirectAttributes.addFlashAttribute("fornecedor", fornecedor);
-            return "redirect:/fornecedores/novo"; // Redireciona para o formulário de novo fornecedor
+            return "redirect:/fornecedores/novo";
         }
     }
 

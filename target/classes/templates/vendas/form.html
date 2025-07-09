@@ -3,135 +3,97 @@
 <head>
     <meta charset="UTF-8">
     <title>Nova Venda - Sistema de Contabilidade</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <style>
+        html, body { height: 100%; }
+        body { display: flex; flex-direction: column; min-height: 100vh; }
         body {
-            font-family: 'Nunito', sans-serif;
-            background-color: #f8f9fa;
-        }
-        .card {
-            border-radius: 15px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.1);
-        }
-        .card-header {
-            background-color: #fff;
-            border-bottom: 1px solid #eee;
-            border-radius: 15px 15px 0 0 !important;
-        }
-        .form-control {
-            border-radius: 8px;
-            border: 1px solid #ddd;
-            padding: 10px 15px;
-        }
-        .form-control:focus {
-            border-color: #80bdff;
-            box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
-        }
-        .btn-primary {
-            background-color: #0d6efd;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-        }
-        .btn-primary:hover {
-            background-color: #0b5ed7;
-        }
-        .alert {
-            border-radius: 8px;
+            background: linear-gradient(135deg, #e3f0ff 0%, #f8fbff 100%);
+            min-height: 100vh;
+            color: #1a237e;
         }
         .navbar {
-            background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%) !important;
+            background: linear-gradient(90deg, #1565c0 0%, #42a5f5 100%);
+        }
+        .navbar-brand, .nav-link, .navbar-toggler-icon {
+            color: #fff !important;
+        }
+        .main-title {
+            font-weight: 700;
+            color: #1976d2;
+            letter-spacing: 1px;
+        }
+        .card {
+            border: none;
+            border-radius: 1rem;
+            box-shadow: 0 2px 8px rgba(33, 150, 243, 0.08);
+        }
+        .card-header {
+            background: transparent;
+            border-bottom: none;
+            border-radius: 1rem 1rem 0 0;
+        }
+        .form-control, .form-select {
+            border-radius: 0.7rem;
+        }
+        .btn-primary, .btn-secondary, .btn-success, .btn-danger, .btn-info {
+            border-radius: 2rem;
+        }
+        .footer {
+            background: #e3f2fd;
+            color: #1976d2;
+            border-top: 1px solid #bbdefb;
         }
     </style>
 </head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-dark">
+<nav class="navbar navbar-expand-lg">
     <div class="container">
-        <a class="navbar-brand" href="/">
-            <i class="fas fa-store me-2"></i>
-            Loja
-        </a>
+        <a class="navbar-brand fw-bold" href="/">Loja</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto">
-                <li class="nav-item">
-                    <a class="nav-link active" href="/vendas">
-                        <i class="fas fa-shopping-cart me-1"></i>Vendas
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/fornecedores">
-                        <i class="fas fa-truck me-1"></i>Fornecedores
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/clientes">
-                        <i class="fas fa-users me-1"></i>Clientes
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/produtos">
-                        <i class="fas fa-boxes me-1"></i>Produtos
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/bens">
-                        <i class="bi bi-building me-1"></i>Bens
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/capital-social">
-                        <i class="bi bi-currency-dollar me-1"></i>Capital Social
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/compras">
-                        <i class="bi bi-box-seam me-1"></i>Compras
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/balanco-patrimonial">
-                        <i class="bi bi-journal-check me-1"></i>Balanço Patrimonial
-                    </a>
-                </li>
+                <li class="nav-item"><a class="nav-link active" href="/vendas">Vendas</a></li>
+                <li class="nav-item"><a class="nav-link" href="/fornecedores">Fornecedores</a></li>
+                <li class="nav-item"><a class="nav-link" href="/clientes">Clientes</a></li>
+                <li class="nav-item"><a class="nav-link" href="/produtos">Produtos</a></li>
+                <li class="nav-item"><a class="nav-link" href="/bens">Bens</a></li>
+                <li class="nav-item"><a class="nav-link" href="/capital-social">Capital Social</a></li>
+                <li class="nav-item"><a class="nav-link" href="/compras">Compras</a></li>
+                <li class="nav-item"><a class="nav-link" href="/balanco-patrimonial">Balanço Patrimonial</a></li>
+                <li class="nav-item"><a class="nav-link" href="/caixa">Caixa</a></li>
             </ul>
         </div>
     </div>
 </nav>
 
-<div class="container mt-5">
+<div class="container my-5">
     <div class="row justify-content-center">
         <div class="col-md-10">
             <div class="card">
                 <div class="card-header">
-                    <h3 class="mb-0">
-                        <i class="fas fa-shopping-cart me-2"></i>
-                        Nova Venda
-                    </h3>
+                    <h3 class="main-title mb-0"><i class="bi bi-cart-check"></i> Nova Venda </h3>
                 </div>
                 <div class="card-body">
                     <div th:if="${param.error}" class="alert alert-danger alert-dismissible fade show" role="alert">
-                        <i class="fas fa-exclamation-circle me-2"></i>
                         Ocorreu um erro ao salvar a venda. Por favor, tente novamente.
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                     <div th:if="${mensagem}" class="alert alert-success alert-dismissible fade show" role="alert">
-                        <i class="fas fa-check-circle me-2"></i><span th:text="${mensagem}"></span>
+                        <span th:text="${mensagem}"></span>
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                     <div th:if="${erro}" class="alert alert-danger alert-dismissible fade show" role="alert">
-                        <i class="fas fa-exclamation-triangle me-2"></i><span th:text="${erro}"></span>
+                        <span th:text="${erro}"></span>
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
 
-
                     <form th:action="@{/vendas/salvar}" th:object="${venda}" method="post" id="vendaForm" class="needs-validation" novalidate>
                         <input type="hidden" th:field="*{id}">
-
                         <div class="mb-3">
                             <label for="cliente" class="form-label">Cliente</label>
                             <select class="form-select" id="cliente" th:field="*{cliente.id}" required>
@@ -144,7 +106,6 @@
                                 Por favor, selecione um cliente.
                             </div>
                         </div>
-
                         <hr>
                         <h5>Itens da Venda</h5>
                         <div id="itensVendaContainer">
@@ -157,9 +118,8 @@
                                         <option value="">Selecione o produto</option>
                                         <option th:each="prod : ${produtos}"
                                                 th:value="${prod.id}"
-                                                th:text="${prod.nome}"
-                                                th:data-preco="${#numbers.formatDecimal(prod.precoVenda, 1, 2, 'POINT')}"
-                                                th:selected="${prod.id == item.produto?.id}"></option>
+                                                th:text="${prod.nome}">
+                                        </option>
                                     </select>
                                     <div class="invalid-feedback">
                                         Selecione um produto.
@@ -168,79 +128,52 @@
                                 <div class="col-md-3">
                                     <input type="number" class="form-control quantidade-input"
                                            th:field="*{itensVenda[__${itemStat.index}__].quantidade}"
-                                           min="1" value="1" required>
+                                           min="1" required
+                                           placeholder="Quantidade">
                                     <div class="invalid-feedback">
                                         Quantidade inválida.
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <input type="text" class="form-control valor-unitario-display"
-                                           th:value="${'R$ ' + #numbers.formatDecimal(item.precoUnitario, 1, 2)}"
-                                           readonly>
-                                    <input type="hidden" class="preco-unitario-input"
-                                           th:field="*{itensVenda[__${itemStat.index}__].precoUnitario}">
+                                    <input type="number" class="form-control preco-unitario-input"
+                                           th:field="*{itensVenda[__${itemStat.index}__].precoUnitario}"
+                                           step="0.01" min="0" required
+                                           placeholder="Preço unitário">
+                                    <div class="invalid-feedback">
+                                        Informe o preço unitário de venda.
+                                    </div>
                                 </div>
                                 <div class="col-md-1 d-flex align-items-center">
-                                    <button type="button" class="btn btn-danger btn-sm remove-item">
-                                        <i class="fas fa-times"></i>
-                                    </button>
+                                    <button type="button" class="btn btn-danger btn-sm remove-item">🗑️</button>
                                 </div>
                             </div>
                         </div>
-                        <button type="button" class="btn btn-success btn-sm mt-2" id="adicionarItem">
-                            <i class="fas fa-plus-circle me-1"></i>Adicionar Item
-                        </button>
-
+                        <button type="button" class="btn btn-success btn-sm mt-2" id="adicionarItem">Adicionar Item</button>
                         <hr>
-
-                        <div class="mb-3 mt-4">
-                            <label for="formaPagamento" class="form-label">Forma de Pagamento</label>
-                            <select class="form-select" id="formaPagamento" th:field="*{formaPagamento}" required>
-                                <option value="">Selecione a forma de pagamento</option>
-                                <option th:each="forma : ${T(com.loja.model.enums.FormaPagamento).values()}"
-                                        th:value="${forma.name()}"
-                                        th:text="${forma}"></option>
-                            </select>
-                            <div class="invalid-feedback">
-                                Por favor, selecione a forma de pagamento.
+                        <div class="row mt-3">
+                            <div class="col-md-12">
+                                <label><strong>Valor Total da Venda:</strong></label>
+                                <span th:text="${'R$ ' + #numbers.formatDecimal(venda.valorTotal, 1, 2)}" class="ms-2"></span>
                             </div>
                         </div>
-
-                        <div class="mb-3" id="parcelasContainer" th:style="${venda.formaPagamento == T(com.loja.model.enums.FormaPagamento).APRAZO ? 'display: block;' : 'display: none;'}">
-                            <label for="parcelas" class="form-label">Número de Parcelas</label>
-                            <select class="form-select" id="parcelas" th:field="*{parcelas}">
-                                <option value="1">1x</option> <option value="2">2x</option>
-                                <option value="3">3x</option>
-                                <option value="4">4x</option>
-                                <option value="5">5x</option>
-                                <option value="6">6x</option>
-                                <option value="7">7x</option>
-                                <option value="8">8x</option>
-                                <option value="9">9x</option>
-                                <option value="10">10x</option>
-                                <option value="11">11x</option>
-                                <option value="12">12x</option>
-                            </select>
+                        <div class="row mt-3">
+                            <div class="col-md-6">
+                                <label for="formaPagamento" class="form-label">Forma de Pagamento</label>
+                                <select class="form-select" id="formaPagamento" th:field="*{formaPagamento}" required>
+                                    <option value="">Selecione</option>
+                                    <option th:value="AVISTA">À Vista</option>
+                                    <option th:value="APRAZO">A Prazo</option>
+                                </select>
+                                <div class="invalid-feedback">Selecione a forma de pagamento.</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="parcelas" class="form-label">Parcelas</label>
+                                <input type="number" class="form-control" id="parcelas" th:field="*{parcelas}" min="1" th:disabled="${venda.formaPagamento != T(com.loja.model.enums.FormaPagamento).APRAZO}"/>
+                            </div>
                         </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Valor Total da Venda</label>
-                            <div class="form-control fw-bold fs-5" id="valorTotalVendaDisplay" th:text="${'R$ ' + #numbers.formatDecimal(venda.valorTotal, 1, 2)}">R$ 0,00</div>
-                            <input type="hidden" id="valorTotalVendaInput" th:field="*{valorTotal}">
-                        </div>
-
-                        <div class="mb-3" id="valorParcelasContainer" th:style="${venda.formaPagamento == T(com.loja.model.enums.FormaPagamento).APRAZO ? 'display: block;' : 'display: none;'}">
-                            <label class="form-label">Valor das Parcelas</label>
-                            <div class="form-control" id="valorParcelasDisplay">R$ 0,00</div>
-                        </div>
-
                         <div class="d-grid gap-2 mt-4">
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-save me-2"></i>Salvar Venda
-                            </button>
-                            <a href="/vendas" class="btn btn-secondary">
-                                <i class="fas fa-arrow-left me-2"></i>Voltar
-                            </a>
+                            <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i> Salvar Venda</button>
+                            <a href="/vendas" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Voltar</a>
                         </div>
                     </form>
                 </div>
@@ -249,201 +182,11 @@
     </div>
 </div>
 
-<footer class="bg-light py-4 mt-5">
+<footer class="footer py-3 mt-auto">
     <div class="container text-center">
-        <p class="mb-0">&copy; 2024 Loja - Sistema de Contabilidade. Todos os direitos reservados.</p>
+        <small>&copy; 2024 Loja - Sistema de Contabilidade.</small>
     </div>
 </footer>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<script th:inline="javascript">
-    /*<![CDATA[*/
-    // Passa a lista de produtos do modelo Thymeleaf para o JavaScript de forma segura
-    const produtosJs = /*[[ ${produtos} ]]*/ [];
-    /*]]>*/
-
-    document.addEventListener('DOMContentLoaded', function() {
-        const vendaForm = document.getElementById('vendaForm');
-        const formaPagamentoSelect = document.getElementById('formaPagamento');
-        const parcelasContainer = document.getElementById('parcelasContainer');
-        const parcelasSelect = document.getElementById('parcelas');
-        const valorTotalVendaDisplay = document.getElementById('valorTotalVendaDisplay');
-        const valorTotalVendaInput = document.getElementById('valorTotalVendaInput');
-        const valorParcelasContainer = document.getElementById('valorParcelasContainer');
-        const valorParcelasDisplay = document.getElementById('valorParcelasDisplay');
-        const itensVendaContainer = document.getElementById('itensVendaContainer');
-        const adicionarItemBtn = document.getElementById('adicionarItem');
-
-        // Função para obter o próximo índice disponível para novos itens
-        function getNextItemIndex() {
-            let maxIndex = -1;
-            document.querySelectorAll('.item-venda-row').forEach(row => {
-                const idInput = row.querySelector('input[type="hidden"][name^="itensVenda["]');
-                if (idInput) {
-                    const name = idInput.name;
-                    const match = name.match(/itensVenda\[(\d+)\]/);
-                    if (match && match[1]) {
-                        maxIndex = Math.max(maxIndex, parseInt(match[1]));
-                    }
-                }
-            });
-            return maxIndex + 1;
-        }
-
-
-        // Função para atualizar os cálculos totais e das parcelas
-        function atualizarCalculosVenda() {
-            let totalGeral = 0;
-            document.querySelectorAll('.item-venda-row').forEach(function(row) {
-                const quantidadeInput = row.querySelector('.quantidade-input');
-                const precoUnitarioInput = row.querySelector('.preco-unitario-input'); // Usar o hidden input
-
-                const quantidade = parseFloat(quantidadeInput.value) || 0;
-                const precoUnitario = parseFloat(precoUnitarioInput.value) || 0; // Pegar do hidden input
-
-                totalGeral += (quantidade * precoUnitario);
-            });
-
-            valorTotalVendaDisplay.textContent = `R$ ${totalGeral.toFixed(2).replace('.', ',')}`;
-            valorTotalVendaInput.value = totalGeral.toFixed(2); // Valor para enviar ao backend
-
-            if (formaPagamentoSelect.value === 'APRAZO') {
-                const numParcelas = parseInt(parcelasSelect.value) || 1;
-                const valorPorParcela = totalGeral / numParcelas;
-                valorParcelasDisplay.textContent = `R$ ${valorPorParcela.toFixed(2).replace('.', ',')}`;
-                valorParcelasContainer.style.display = 'block';
-                parcelasContainer.style.display = 'block';
-            } else {
-                valorParcelasContainer.style.display = 'none';
-                parcelasContainer.style.display = 'none';
-            }
-        }
-
-        // Configura eventos para uma linha de item recém-criada ou existente
-        function setupItemRowEvents(row) {
-            const produtoSelect = row.querySelector('.produto-select');
-            const quantidadeInput = row.querySelector('.quantidade-input');
-            const valorUnitarioDisplay = row.querySelector('.valor-unitario-display');
-            const precoUnitarioInput = row.querySelector('.preco-unitario-input');
-            const removeItemBtn = row.querySelector('.remove-item');
-
-            produtoSelect.addEventListener('change', function() {
-                const selectedOption = this.options[this.selectedIndex];
-                const preco = parseFloat(selectedOption.dataset.preco) || 0;
-                valorUnitarioDisplay.textContent = `R$ ${preco.toFixed(2).replace('.', ',')}`;
-                precoUnitarioInput.value = preco.toFixed(2); // Atualiza o hidden input
-                atualizarCalculosVenda();
-            });
-
-            quantidadeInput.addEventListener('input', atualizarCalculosVenda);
-
-            removeItemBtn.addEventListener('click', function() {
-                row.remove();
-                atualizarCalculosVenda(); // Recalcula o total após remover
-                reindexarItensVenda(); // Reindexa os campos para evitar lacunas
-            });
-
-            // Inicializar o valor unitário ao carregar a página para itens existentes
-            // ou quando um novo item é adicionado e já tem um produto selecionado (cenário raro em novo form)
-            if (produtoSelect.value) {
-                const selectedOption = produtoSelect.options[produtoSelect.selectedIndex];
-                const preco = parseFloat(selectedOption.dataset.preco) || 0;
-                valorUnitarioDisplay.textContent = `R$ ${preco.toFixed(2).replace('.', ',')}`;
-                precoUnitarioInput.value = preco.toFixed(2);
-            }
-        }
-
-        // Função para reindexar os campos após a remoção de um item
-        function reindexarItensVenda() {
-            document.querySelectorAll('.item-venda-row').forEach((row, newIndex) => {
-                row.querySelectorAll('[name^="itensVenda["]').forEach(input => {
-                    const originalName = input.name;
-                    // Substitui o índice no nome do campo
-                    input.name = originalName.replace(/itensVenda\[\d+\]/, `itensVenda[${newIndex}]`);
-                    // Se for um campo th:field, o Spring/Thymeleaf gerará o id,
-                    // mas se você tiver IDs gerados manualmente, precisaria atualizar também.
-                    // Por exemplo: input.id = originalId.replace(/itensVenda\d+/, `itensVenda${newIndex}`);
-                });
-            });
-        }
-
-
-        // Adicionar Item (botão)
-        adicionarItemBtn.addEventListener('click', function() {
-            const nextIndex = getNextItemIndex();
-            const newRow = document.createElement('div');
-            newRow.classList.add('row', 'g-2', 'mb-2', 'item-venda-row');
-
-            // Constrói as opções de produtos dinamicamente a partir do array produtosJs
-            let produtosOptionsHtml = '<option value="">Selecione o produto</option>';
-            produtosJs.forEach(p => {
-                // Certifique-se de que p.precoVenda seja tratado como string para data-preco se for BigDecimal
-                produtosOptionsHtml += `<option value="${p.id}" data-preco="${p.precoVenda}">${p.nome}</option>`;
-            });
-
-
-            newRow.innerHTML = `
-                <input type="hidden" name="itensVenda[${nextIndex}].id" value="" />
-                <div class="col-md-5">
-                    <select class="form-select produto-select" name="itensVenda[${nextIndex}].produto.id" required>
-                        ${produtosOptionsHtml}
-                    </select>
-                    <div class="invalid-feedback">Selecione um produto.</div>
-                </div>
-                <div class="col-md-3">
-                    <input type="number" class="form-control quantidade-input" name="itensVenda[${nextIndex}].quantidade" min="1" value="1" required>
-                    <div class="invalid-feedback">Quantidade inválida.</div>
-                </div>
-                <div class="col-md-3">
-                    <input type="text" class="form-control valor-unitario-display" value="R$ 0,00" readonly>
-                    <input type="hidden" class="preco-unitario-input" name="itensVenda[${nextIndex}].precoUnitario">
-                </div>
-                <div class="col-md-1 d-flex align-items-center">
-                    <button type="button" class="btn btn-danger btn-sm remove-item">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-            `;
-            itensVendaContainer.appendChild(newRow);
-            setupItemRowEvents(newRow);
-            atualizarCalculosVenda(); // Atualiza os cálculos ao adicionar um novo item (inicialmente com 0)
-        });
-
-        // Event listeners para os elementos de pagamento
-        formaPagamentoSelect.addEventListener('change', atualizarCalculosVenda);
-        parcelasSelect.addEventListener('change', atualizarCalculosVenda);
-
-        // Configurar eventos para todos os itens de venda existentes ao carregar a página
-        document.querySelectorAll('.item-venda-row').forEach(setupItemRowEvents);
-
-        // Inicializar cálculos ao carregar a página
-        atualizarCalculosVenda();
-
-        // Validação do formulário Bootstrap 5
-        vendaForm.addEventListener('submit', function(event) {
-            // Primeiro, garantir que não há linhas vazias que causem erro no backend
-            let hasValidItems = false;
-            document.querySelectorAll('.item-venda-row').forEach(row => {
-                const produtoSelect = row.querySelector('.produto-select');
-                if (produtoSelect.value !== '') { // Verifica se um produto foi selecionado
-                    hasValidItems = true;
-                }
-            });
-
-            if (!hasValidItems) {
-                alert('Por favor, adicione pelo menos um item válido à venda (com produto selecionado).');
-                event.preventDefault();
-                event.stopPropagation();
-            }
-
-            if (!vendaForm.checkValidity()) {
-                event.preventDefault();
-                event.stopPropagation();
-            }
-
-            vendaForm.classList.add('was-validated');
-        }, false);
-    });
-</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

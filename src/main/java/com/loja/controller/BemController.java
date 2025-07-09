@@ -59,7 +59,6 @@ public class BemController {
     }
 
     @PostMapping("/salvar")
-    // Sugestão: Adicionar @Valid Bem e BindingResult para validação de formulário
     public String salvarBem(@Valid @ModelAttribute Bem bem, BindingResult result, RedirectAttributes redirectAttributes, Model model) {
         if (result.hasErrors()) {
             model.addAttribute("tiposBem", TipoBem.values()); // Recarregar enums para o formulário
@@ -71,9 +70,6 @@ public class BemController {
             return "redirect:/bens";
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("erro", "Erro ao salvar bem: " + e.getMessage());
-            // Se o erro for de negócio (ex: CNPJ duplicado), você pode retornar ao formulário também
-            // ou redirecionar para a lista com a mensagem de erro.
-            // Para simplicidade, vamos para a lista.
             return "redirect:/bens";
         }
     }

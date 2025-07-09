@@ -18,7 +18,6 @@ public class CustomErrorController implements ErrorController {
 
     private final Environment environment; // Injetar Environment para verificar perfis
 
-    // Injeção via construtor é preferível
     public CustomErrorController(Environment environment) {
         this.environment = environment;
     }
@@ -43,7 +42,7 @@ public class CustomErrorController implements ErrorController {
         // Adiciona o código de status ao modelo
         model.addAttribute("status", statusCode);
 
-        // Define uma mensagem amigável com base no status ou na existência da exceção
+        // Define uma mensagem
         String userFriendlyMessage;
         String technicalDetails = ""; // Detalhes técnicos, exibidos condicionalmente
 
@@ -53,11 +52,9 @@ public class CustomErrorController implements ErrorController {
             userFriendlyMessage = "Você não tem permissão para acessar este recurso.";
         } else if (exception != null) {
             userFriendlyMessage = "Ocorreu um erro inesperado no servidor. Por favor, tente novamente mais tarde.";
-            // Para ambientes de desenvolvimento, inclua detalhes técnicos
+            // Para ambientes de desenvolvimento
             if (environment.acceptsProfiles(org.springframework.core.env.Profiles.of("dev", "local"))) {
                 technicalDetails = "Detalhes Técnicos: " + exception.getMessage();
-                // O stack trace pode ser acessado diretamente no Thymeleaf via 'exception'
-                // ou pode ser adicionado aqui para controle mais fino
                 model.addAttribute("exceptionStackTrace", getStackTrace(exception));
             }
         } else {
@@ -71,19 +68,12 @@ public class CustomErrorController implements ErrorController {
         model.addAttribute("exception", exception);
 
         // Determina qual template de erro usar.
-        // Você pode ter templates específicos para 404 (error-404.html) ou 500 (error-500.html)
-        // Se não encontrar um específico, usa o genérico "error.html".
         if (statusCode == HttpStatus.NOT_FOUND.value()) {
             return "error/404"; // Procura por src/main/resources/templates/error/404.html
         }
-        // Para outros erros, pode-se criar mais ifs ou usar um template padrão
         return "error/error"; // Procura por src/main/resources/templates/error/error.html
     }
 
-    /**
-     * Helper method to convert a Throwable's stack trace to a String.
-     * Useful for displaying in development mode.
-     */
     private String getStackTrace(Throwable throwable) {
         if (throwable == null) {
             return "";

@@ -68,10 +68,10 @@ public class ClienteController {
         try {
             logger.info("Tentando salvar cliente: {}", cliente.getNome());
 
-            // Remove caracteres especiais do CPF/CNPJ (se necessário, pode ser feito no Service)
+            // Remove caracteres especiais do CPF/CNPJ, posso fazer no service essas implementações
             cliente.setCpf(cliente.getCpf().replaceAll("[^0-9]", ""));
 
-            // Normaliza o estado para maiúsculas (se necessário, pode ser feito no Service)
+            // Normaliza o estado para maiúsculas
             if (cliente.getEstado() != null) {
                 cliente.setEstado(cliente.getEstado().toUpperCase());
             }
@@ -85,11 +85,7 @@ public class ClienteController {
         } catch (Exception e) {
             logger.error("Erro ao salvar cliente: {}", e.getMessage(), e);
             redirectAttributes.addFlashAttribute("erro", "Erro ao salvar cliente: " + e.getMessage());
-            // Se o erro não for de validação (ex: duplicidade de CPF no banco),
-            // podemos redirecionar e manter os dados para o usuário tentar novamente.
-            // Para isso, precisamos adicionar o objeto "cliente" como flash attribute.
             redirectAttributes.addFlashAttribute("cliente", cliente);
-            // Redireciona para o formulário de novo cliente.
             return "redirect:/clientes/novo";
         }
     }

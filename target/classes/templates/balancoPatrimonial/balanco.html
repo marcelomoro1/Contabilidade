@@ -4,107 +4,248 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Balanço Patrimonial</title>
-    <link rel="stylesheet" href="/css/style.css"> <style>
-    body { font-family: Arial, sans-serif; margin: 20px; }
-    h1, h2 { color: #333; }
-    table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-    th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-    th { background-color: #f2f2f2; }
-    tfoot td { font-weight: bold; background-color: #e9e9e9; }
-    .summary-box {
-        border: 1px solid #ccc;
-        padding: 15px;
-        margin-top: 20px;
-        background-color: #f9f9f9;
-    }
-    .summary-box p { margin: 5px 0; }
-    .balance-check { font-weight: bold; }
-    .balance-ok { color: green; }
-    .balance-fail { color: red; }
-</style>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #e3f0ff 0%, #f8fbff 100%);
+            min-height: 100vh;
+            color: #1a237e;
+        }
+        .navbar {
+            background: linear-gradient(90deg, #1565c0 0%, #42a5f5 100%);
+        }
+        .navbar-brand, .nav-link, .navbar-toggler-icon {
+            color: #fff !important;
+        }
+        .main-title {
+            font-weight: 700;
+            color: #1976d2;
+            letter-spacing: 1px;
+        }
+        .dashboard-cards {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            margin-bottom: 2.5rem;
+            flex-wrap: wrap;
+        }
+        .dashboard-card {
+            flex: 1 1 220px;
+            min-width: 220px;
+            max-width: 320px;
+            border-radius: 1.2rem;
+            box-shadow: 0 2px 12px rgba(33, 150, 243, 0.10);
+            color: #fff;
+            padding: 1.5rem 1.2rem 1.2rem 1.2rem;
+            text-align: center;
+            position: relative;
+        }
+        .dashboard-card.ativos {
+            background: linear-gradient(135deg, #42a5f5 0%, #1976d2 100%);
+        }
+        .dashboard-card.passivos {
+            background: linear-gradient(135deg, #ff7043 0%, #d84315 100%);
+        }
+        .dashboard-card.pl {
+            background: linear-gradient(135deg, #7e57c2 0%, #43cea2 100%);
+        }
+        .dashboard-card .icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+        .dashboard-card .label {
+            font-size: 1.1rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        .dashboard-card .value {
+            font-size: 2.1rem;
+            font-weight: 800;
+            margin-top: 0.2rem;
+        }
+        .dashboard-card .sub {
+            font-size: 0.95rem;
+            opacity: 0.85;
+        }
+        .balance-status {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.7rem;
+            margin-bottom: 2.2rem;
+        }
+        .balance-status .badge {
+            font-size: 1.1rem;
+            padding: 0.7em 1.2em;
+            border-radius: 2rem;
+        }
+        .card {
+            border: none;
+            border-radius: 1.2rem;
+            box-shadow: 0 2px 8px rgba(33, 150, 243, 0.08);
+            margin-bottom: 2rem;
+        }
+        .card-header {
+            background: transparent;
+            border-bottom: none;
+            text-align: center;
+        }
+        .card-header .icon {
+            font-size: 2.2rem;
+            margin-bottom: 0.2rem;
+        }
+        .table {
+            border-radius: 1rem;
+            overflow: hidden;
+            background: #fff;
+        }
+        .footer {
+            background: #e3f2fd;
+            color: #1976d2;
+            border-top: 1px solid #bbdefb;
+        }
+        @media (max-width: 900px) {
+            .dashboard-cards { flex-direction: column; gap: 1rem; }
+        }
+    </style>
 </head>
 <body>
-<h1>Balanço Patrimonial</h1>
-
-<div th:if="${balanco}">
-    <h2>Ativos (Bens e Direitos)</h2>
-    <table>
-        <thead>
-        <tr>
-            <th>Descrição</th>
-            <th>Valor</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="item : ${balanco.bensDireitos}">
-            <td th:text="${item.descricao}"></td>
-            <td th:text="${#numbers.formatCurrency(item.valor)}"></td>
-        </tr>
-        </tbody>
-        <tfoot>
-        <tr>
-            <td><strong>Total de Ativos</strong></td>
-            <td th:text="${#numbers.formatCurrency(balanco.totalAtivos)}"></td>
-        </tr>
-        </tfoot>
-    </table>
-
-    <h2>Passivos (Obrigações)</h2>
-    <table>
-        <thead>
-        <tr>
-            <th>Descrição</th>
-            <th>Valor</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="item : ${balanco.obrigacoes}">
-            <td th:text="${item.descricao}"></td>
-            <td th:text="${#numbers.formatCurrency(item.valor)}"></td>
-        </tr>
-        </tbody>
-        <tfoot>
-        <tr>
-            <td><strong>Total de Passivos</strong></td>
-            <td th:text="${#numbers.formatCurrency(balanco.totalPassivos)}"></td>
-        </tr>
-        </tfoot>
-    </table>
-
-    <h2>Patrimônio Líquido</h2>
-    <table>
-        <thead>
-        <tr>
-            <th>Descrição</th>
-            <th>Valor</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="item : ${balanco.patrimonioLiquidoItems}">
-            <td th:text="${item.descricao}"></td>
-            <td th:text="${#numbers.formatCurrency(item.valor)}"></td>
-        </tr>
-        </tbody>
-        <tfoot>
-        <tr>
-            <td><strong>Total do Patrimônio Líquido</strong></td>
-            <td th:text="${#numbers.formatCurrency(balanco.patrimonioLiquido)}"></td>
-        </tr>
-        </tfoot>
-    </table>
-
-    <div class="summary-box">
-        <p><strong>Total de Ativos:</strong> <span th:text="${#numbers.formatCurrency(balanco.totalAtivos)}"></span></p>
-        <p><strong>Total de Passivos + Patrimônio Líquido:</strong> <span th:text="${#numbers.formatCurrency(balanco.totalPassivos.add(balanco.patrimonioLiquido))}"></span></p>
-        <p class="balance-check"
-           th:classappend="${balanco.totalAtivos.compareTo(balanco.totalPassivos.add(balanco.patrimonioLiquido)) == 0 ? 'balance-ok' : 'balance-fail'}">
-            <span th:if="${balanco.totalAtivos.compareTo(balanco.totalPassivos.add(balanco.patrimonioLiquido)) == 0}">Balanço OK! (Ativo = Passivo + PL)</span>
-            <span th:if="${balanco.totalAtivos.compareTo(balanco.totalPassivos.add(balanco.patrimonioLiquido)) != 0}">ATENÇÃO: Balanço não fecha! Diferença: <span th:text="${#numbers.formatCurrency(balanco.totalAtivos.subtract(balanco.totalPassivos.add(balanco.patrimonioLiquido)))}"></span></span>
-        </p>
+<nav class="navbar navbar-expand-lg">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/">Loja</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link" href="/vendas">Vendas</a></li>
+                <li class="nav-item"><a class="nav-link" href="/fornecedores">Fornecedores</a></li>
+                <li class="nav-item"><a class="nav-link" href="/clientes">Clientes</a></li>
+                <li class="nav-item"><a class="nav-link" href="/produtos">Produtos</a></li>
+                <li class="nav-item"><a class="nav-link" href="/bens">Bens</a></li>
+                <li class="nav-item"><a class="nav-link" href="/capital-social">Capital Social</a></li>
+                <li class="nav-item"><a class="nav-link" href="/compras">Compras</a></li>
+                <li class="nav-item"><a class="nav-link active" href="/balanco-patrimonial">Balanço Patrimonial</a></li>
+                <li class="nav-item"><a class="nav-link" href="/caixa">Caixa</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<div class="container my-5">
+    <h2 class="main-title mb-4"><i class="bi bi-bar-chart"></i> Balanço Patrimonial</h2>
+    <div th:if="${balanco}">
+        <!-- Mini-dashboard cards -->
+        <div class="dashboard-cards mb-4">
+            <div class="dashboard-card ativos">
+                <span class="icon"><i class="bi bi-wallet2"></i></span>
+                <span class="label">Ativos</span>
+                <div class="value" th:text="${#numbers.formatCurrency(balanco.totalAtivos)}"></div>
+                <div class="sub">Bens e Direitos</div>
+            </div>
+            <div class="dashboard-card passivos">
+                <span class="icon"><i class="bi bi-credit-card-2-back"></i></span>
+                <span class="label">Passivos</span>
+                <div class="value" th:text="${#numbers.formatCurrency(balanco.totalPassivos)}"></div>
+                <div class="sub">Obrigações</div>
+            </div>
+            <div class="dashboard-card pl">
+                <span class="icon"><i class="bi bi-bank"></i></span>
+                <span class="label">Patrimônio Líquido</span>
+                <div class="value" th:text="${#numbers.formatCurrency(balanco.patrimonioLiquido)}"></div>
+                <div class="sub">Capital Próprio</div>
+            </div>
+        </div>
+        <!-- Status do balanço -->
+        <div class="balance-status">
+            <span th:if="${balanco.totalAtivos.compareTo(balanco.totalPassivos.add(balanco.patrimonioLiquido)) == 0}" class="badge bg-success">Balanço OK! (Ativo = Passivo + PL)</span>
+            <span th:if="${balanco.totalAtivos.compareTo(balanco.totalPassivos.add(balanco.patrimonioLiquido)) != 0}" class="badge bg-danger">Desequilibrado! Diferença: <span th:text="${#numbers.formatCurrency(balanco.totalAtivos.subtract(balanco.totalPassivos.add(balanco.patrimonioLiquido)))}"></span></span>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        <span class="icon"><i class="bi bi-wallet2"></i></span>
+                        <span class="main-title">Ativos</span>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-sm mb-0">
+                            <tbody>
+                            <tr th:each="item : ${balanco.bensDireitos}">
+                                <td th:text="${item.descricao}"></td>
+                                <td th:text="${#numbers.formatCurrency(item.valor)}"></td>
+                            </tr>
+                            </tbody>
+                            <tfoot>
+                            <tr>
+                                <td><strong>Total de Ativos</strong></td>
+                                <td th:text="${#numbers.formatCurrency(balanco.totalAtivos)}"></td>
+                            </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        <span class="icon"><i class="bi bi-credit-card-2-back"></i></span>
+                        <span class="main-title">Passivos</span>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-sm mb-0">
+                            <tbody>
+                            <tr th:each="item : ${balanco.obrigacoes}">
+                                <td th:text="${item.descricao}"></td>
+                                <td th:text="${#numbers.formatCurrency(item.valor)}"></td>
+                            </tr>
+                            </tbody>
+                            <tfoot>
+                            <tr>
+                                <td><strong>Total de Passivos</strong></td>
+                                <td th:text="${#numbers.formatCurrency(balanco.totalPassivos)}"></td>
+                            </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        <span class="icon"><i class="bi bi-bank"></i></span>
+                        <span class="main-title">Patrimônio Líquido</span>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-sm mb-0">
+                            <tbody>
+                            <tr th:each="item : ${balanco.patrimonioLiquidoItems}">
+                                <td th:text="${item.descricao}"></td>
+                                <td th:text="${#numbers.formatCurrency(item.valor)}"></td>
+                            </tr>
+                            </tbody>
+                            <tfoot>
+                            <tr>
+                                <td><strong>Total do Patrimônio Líquido</strong></td>
+                                <td th:text="${#numbers.formatCurrency(balanco.patrimonioLiquido)}"></td>
+                            </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div th:unless="${balanco}">
+        <div class="alert alert-warning mt-4">Não foi possível gerar o Balanço Patrimonial.</div>
     </div>
 </div>
-<div th:unless="${balanco}">
-    <p>Não foi possível gerar o Balanço Patrimonial.</p>
-</div>
+<footer class="footer py-3 mt-auto">
+    <div class="container text-center">
+        <small>&copy; 2024 Loja - Sistema de Contabilidade.</small>
+    </div>
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

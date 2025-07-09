@@ -23,6 +23,12 @@ public class ItemVenda {
     @Column(name = "preco_unitario", precision = 10, scale = 2) // Preço do produto no momento da venda
     private BigDecimal precoUnitario;
 
+    @Column(name = "debito_icms", precision = 10, scale = 2)
+    private BigDecimal debitoIcms;
+
+    @Column(name = "credito_icms", precision = 10, scale = 2)
+    private BigDecimal creditoIcms;
+
     // --- Campos de Cálculo, se você decidir persistí-los ---
     // @Column(name = "subtotal_item", precision = 10, scale = 2)
     // private BigDecimal subtotal; // Se for persistido
@@ -32,8 +38,7 @@ public class ItemVenda {
 
     // Construtor padrão
     public ItemVenda() {
-        this.quantidade = 0;
-        this.precoUnitario = BigDecimal.ZERO;
+        // Campos começam vazios para que o usuário preencha
     }
 
     // Getters e Setters
@@ -47,6 +52,10 @@ public class ItemVenda {
     public void setQuantidade(Integer quantidade) { this.quantidade = quantidade; }
     public BigDecimal getPrecoUnitario() { return precoUnitario; }
     public void setPrecoUnitario(BigDecimal precoUnitario) { this.precoUnitario = precoUnitario; }
+    public BigDecimal getDebitoIcms() { return debitoIcms; }
+    public void setDebitoIcms(BigDecimal debitoIcms) { this.debitoIcms = debitoIcms; }
+    public BigDecimal getCreditoIcms() { return creditoIcms; }
+    public void setCreditoIcms(BigDecimal creditoIcms) { this.creditoIcms = creditoIcms; }
 
     // --- Métodos Calculados (Transientes) ---
     // Subtotal do item (quantidade * precoUnitario)
@@ -55,19 +64,6 @@ public class ItemVenda {
     public BigDecimal getSubtotal() {
         if (this.precoUnitario != null && this.quantidade != null) {
             return this.precoUnitario.multiply(BigDecimal.valueOf(this.quantidade))
-                    .setScale(2, RoundingMode.HALF_UP);
-        }
-        return BigDecimal.ZERO;
-    }
-
-    // Lucro por item (precoVenda - precoCusto) * quantidade
-    // Assumindo que 'produto.getPrecoCompra()' é o custo do produto
-    // Se você tem um campo 'lucroItem' persistido, mesma lógica do subtotal.
-    public BigDecimal getLucroItem() {
-        if (this.produto != null && this.produto.getPrecoCompra() != null && this.precoUnitario != null && this.quantidade != null) {
-            // PrecoUnitario (preço de venda do item) - PrecoCompra (custo do produto)
-            return (this.precoUnitario.subtract(this.produto.getPrecoCompra()))
-                    .multiply(BigDecimal.valueOf(this.quantidade))
                     .setScale(2, RoundingMode.HALF_UP);
         }
         return BigDecimal.ZERO;

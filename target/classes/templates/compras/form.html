@@ -4,148 +4,191 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registrar Nova Compra</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <style>
-        body { padding-top: 20px; }
-        .container { max-width: 900px; }
-        .item-row { display: flex; align-items: center; margin-bottom: 10px; }
-        .item-row .form-group { margin-bottom: 0; margin-right: 10px; }
-        .item-row .form-control { width: auto; display: inline-block; }
-        .error-message { color: red; font-size: 0.875em; margin-top: 0.25em; }
+        html, body { height: 100%; }
+        body { display: flex; flex-direction: column; min-height: 100vh; }
+        body {
+            background: linear-gradient(135deg, #e3f0ff 0%, #f8fbff 100%);
+            min-height: 100vh;
+            color: #1a237e;
+        }
+        .navbar {
+            background: linear-gradient(90deg, #1565c0 0%, #42a5f5 100%);
+        }
+        .navbar-brand, .nav-link, .navbar-toggler-icon {
+            color: #fff !important;
+        }
+        .main-title {
+            font-weight: 700;
+            color: #1976d2;
+            letter-spacing: 1px;
+        }
+        .card {
+            border: none;
+            border-radius: 1rem;
+            box-shadow: 0 2px 8px rgba(33, 150, 243, 0.08);
+        }
+        .btn-primary, .btn-info, .btn-warning, .btn-danger, .btn-secondary, .btn-success {
+            border-radius: 2rem;
+        }
+        .footer {
+            background: #e3f2fd;
+            color: #1976d2;
+            border-top: 1px solid #bbdefb;
+        }
+        .item-row { display: flex; align-items: end; gap: 10px; margin-bottom: 10px; }
+        .error-message { color: #d32f2f; font-size: 0.875em; margin-top: 0.25em; }
     </style>
 </head>
 <body>
-<div class="container">
-    <h2 class="mb-4">Registrar Nova Compra</h2>
-
-    <div th:if="${erro}" class="alert alert-danger" role="alert">
-        <p th:text="${erro}"></p>
+<nav class="navbar navbar-expand-lg">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/">Loja</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link" href="/vendas">Vendas</a></li>
+                <li class="nav-item"><a class="nav-link" href="/fornecedores">Fornecedores</a></li>
+                <li class="nav-item"><a class="nav-link" href="/clientes">Clientes</a></li>
+                <li class="nav-item"><a class="nav-link" href="/produtos">Produtos</a></li>
+                <li class="nav-item"><a class="nav-link" href="/bens">Bens</a></li>
+                <li class="nav-item"><a class="nav-link" href="/capital-social">Capital Social</a></li>
+                <li class="nav-item"><a class="nav-link active" href="/compras">Compras</a></li>
+                <li class="nav-item"><a class="nav-link" href="/balanco-patrimonial">Balanço Patrimonial</a></li>
+                <li class="nav-item"><a class="nav-link" href="/caixa">Caixa</a></li>
+            </ul>
+        </div>
     </div>
-    <div th:if="${mensagem}" class="alert alert-success" role="alert">
-        <p th:text="${mensagem}"></p>
-    </div>
+</nav>
 
-    <form th:action="@{/compras/salvar}" th:object="${compra}" method="post">
-        <div class="form-group">
-            <label for="fornecedor">Fornecedor:</label>
-            <select id="fornecedor" th:field="*{fornecedor.id}" class="form-control" required>
-                <option value="">Selecione um Fornecedor</option>
-                <option th:each="f : ${fornecedores}" th:value="${f.id}" th:text="${f.nome}"></option>
-            </select>
-            <div class="error-message" th:if="${#fields.hasErrors('fornecedor.id')}" th:errors="*{fornecedor.id}"></div>
-        </div>
-
-        <div class="form-group">
-            <label for="formaPagamento">Forma de Pagamento:</label>
-            <select id="formaPagamento" th:field="*{formaPagamento}" class="form-control" required onchange="toggleParcelas()">
-                <option value="">Selecione a Forma de Pagamento</option>
-                <option th:each="fp : ${formasPagamento}" th:value="${fp}" th:text="${fp.descricao}"></option>
-            </select>
-            <div class="error-message" th:if="${#fields.hasErrors('formaPagamento')}" th:errors="*{formaPagamento}"></div>
-        </div>
-
-        <div id="parcelasDiv" class="form-group" style="display: none;">
-            <label for="parcelas">Número de Parcelas:</label>
-            <input type="number" id="parcelas" th:field="*{parcelas}" class="form-control" min="1"/>
-            <div class="error-message" th:if="${#fields.hasErrors('parcelas')}" th:errors="*{parcelas}"></div>
-        </div>
-
-        <hr/>
-        <h4>Itens da Compra</h4>
-        <div class="error-message" th:if="${#fields.hasErrors('itensCompra')}" th:errors="*{itensCompra}"></div>
-
-        <div id="itensCompraContainer">
-            <div th:each="item, itemStat : *{itensCompra}" class="item-row">
-                <input type="hidden" th:field="*{itensCompra[__${itemStat.index}__].id}" />
-                <div class="form-group col-md-5">
-                    <label th:for="${'produto' + itemStat.index}">Produto:</label>
-                    <select th:id="${'produto' + itemStat.index}" th:field="*{itensCompra[__${itemStat.index}__].produto.id}" class="form-control form-control-sm" required>
-                        <option value="">Selecione um Produto</option>
-                        <option th:each="p : ${produtos}" th:value="${p.id}" th:text="${p.nome}"></option>
-                    </select>
-                    <div class="error-message" th:if="${#fields.hasErrors('itensCompra[' + itemStat.index + '].produto.id')}" th:errors="*{itensCompra[__${itemStat.index}__].produto.id}"></div>
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10 col-xl-9">
+            <div class="card">
+                <div class="card-header bg-white border-0 pb-0">
+                    <h3 class="main-title mb-0"><i class="bi bi-bag-check"></i> Registrar Nova Compra</h3>
                 </div>
-                <div class="form-group col-md-3">
-                    <label th:for="${'quantidade' + itemStat.index}">Qtd:</label>
-                    <input type="number" th:id="${'quantidade' + itemStat.index}" th:field="*{itensCompra[__${itemStat.index}__].quantidade}" class="form-control form-control-sm" min="1" required/>
-                    <div class="error-message" th:if="${#fields.hasErrors('itensCompra[' + itemStat.index + '].quantidade')}" th:errors="*{itensCompra[__${itemStat.index}__].quantidade}"></div>
+                <div class="card-body">
+                    <div th:if="${erro}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <span th:text="${erro}"></span>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    <div th:if="${mensagem}" class="alert alert-success alert-dismissible fade show" role="alert">
+                        <span th:text="${mensagem}"></span>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    <form th:action="@{/compras/salvar}" th:object="${compra}" method="post">
+                        <div class="mb-3">
+                            <label for="fornecedor" class="form-label">Fornecedor</label>
+                            <select id="fornecedor" th:field="*{fornecedor.id}" class="form-control" required>
+                                <option value="">Selecione um Fornecedor</option>
+                                <option th:each="f : ${fornecedores}" th:value="${f.id}" th:text="${f.nome}"></option>
+                            </select>
+                            <div class="error-message" th:if="${#fields.hasErrors('fornecedor.id')}" th:errors="*{fornecedor.id}"></div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="formaPagamento" class="form-label">Forma de Pagamento</label>
+                            <select id="formaPagamento" th:field="*{formaPagamento}" class="form-control" required onchange="toggleParcelas()">
+                                <option value="">Selecione a Forma de Pagamento</option>
+                                <option th:each="fp : ${formasPagamento}" th:value="${fp}" th:text="${fp.descricao}"></option>
+                            </select>
+                            <div class="error-message" th:if="${#fields.hasErrors('formaPagamento')}" th:errors="*{formaPagamento}"></div>
+                        </div>
+                        <div id="parcelasDiv" class="mb-3" style="display: none;">
+                            <label for="parcelas" class="form-label">Número de Parcelas</label>
+                            <input type="number" id="parcelas" th:field="*{parcelas}" class="form-control" min="1"/>
+                            <div class="error-message" th:if="${#fields.hasErrors('parcelas')}" th:errors="*{parcelas}"></div>
+                        </div>
+                        <hr/>
+                        <h5 class="mb-3">Itens da Compra</h5>
+                        <div class="error-message" th:if="${#fields.hasErrors('itensCompra')}" th:errors="*{itensCompra}"></div>
+                        <div id="itensCompraContainer">
+                            <div th:each="item, itemStat : *{itensCompra}" class="item-row">
+                                <input type="hidden" th:field="*{itensCompra[__${itemStat.index}__].id}" />
+                                <div class="flex-fill">
+                                    <label th:for="${'produto' + itemStat.index}" class="form-label">Produto</label>
+                                    <select th:id="${'produto' + itemStat.index}" th:field="*{itensCompra[__${itemStat.index}__].produto.id}" class="form-control form-control-sm" required>
+                                        <option value="">Selecione um Produto</option>
+                                        <option th:each="p : ${produtos}" th:value="${p.id}" th:text="${p.nome}"></option>
+                                    </select>
+                                    <div class="error-message" th:if="${#fields.hasErrors('itensCompra[' + itemStat.index + '].produto.id')}" th:errors="*{itensCompra[__${itemStat.index}__].produto.id}"></div>
+                                </div>
+                                <div style="width: 110px;">
+                                    <label th:for="${'quantidade' + itemStat.index}" class="form-label">Qtd</label>
+                                    <input type="number" th:id="${'quantidade' + itemStat.index}" th:field="*{itensCompra[__${itemStat.index}__].quantidade}" class="form-control form-control-sm" min="1" required/>
+                                    <div class="error-message" th:if="${#fields.hasErrors('itensCompra[' + itemStat.index + '].quantidade')}" th:errors="*{itensCompra[__${itemStat.index}__].quantidade}"></div>
+                                </div>
+                                <div style="width: 160px;">
+                                    <label th:for="${'precoUnitario' + itemStat.index}" class="form-label">Preço Unitário</label>
+                                    <input type="number" th:id="${'precoUnitario' + itemStat.index}" th:field="*{itensCompra[__${itemStat.index}__].precoUnitarioCompra}" class="form-control form-control-sm" step="0.01" min="0" required/>
+                                    <div class="error-message" th:if="${#fields.hasErrors('itensCompra[' + itemStat.index + '].precoUnitarioCompra')}" th:errors="*{itensCompra[__${itemStat.index}__].precoUnitarioCompra}"></div>
+                                </div>
+                                <button type="button" class="btn btn-danger btn-sm" onclick="removerItem(this)"><i class="bi bi-trash"></i> Remover</button>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-secondary mb-3" onclick="adicionarItem()"><i class="bi bi-plus-circle"></i> Adicionar Item</button>
+                        <div class="d-grid gap-2 mt-4">
+                            <button type="submit" class="btn btn-success"><i class="bi bi-save"></i> Salvar Compra</button>
+                            <a th:href="@{/compras}" class="btn btn-secondary"><i class="bi bi-x-circle"></i> Cancelar</a>
+                        </div>
+                    </form>
                 </div>
-                <div class="form-group col-md-4">
-                    <label th:for="${'precoUnitario' + itemStat.index}">Preço Unitário:</label>
-                    <input type="number" th:id="${'precoUnitario' + itemStat.index}" th:field="*{itensCompra[__${itemStat.index}__].precoUnitarioCompra}" class="form-control form-control-sm" step="0.01" min="0" required/>
-                    <div class="error-message" th:if="${#fields.hasErrors('itensCompra[' + itemStat.index + '].precoUnitarioCompra')}" th:errors="*{itensCompra[__${itemStat.index}__].precoUnitarioCompra}"></div>
-                </div>
-                <button type="button" class="btn btn-danger btn-sm ml-2" onclick="removerItem(this)">Remover</button>
             </div>
         </div>
-
-        <button type="button" class="btn btn-secondary mb-3" onclick="adicionarItem()">Adicionar Item</button>
-        <br/>
-
-        <button type="submit" class="btn btn-success mt-3">Salvar Compra</button>
-        <a th:href="@{/compras}" class="btn btn-secondary mt-3 ml-2">Cancelar</a>
-    </form>
+    </div>
 </div>
-
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<footer class="footer py-3 mt-auto">
+    <div class="container text-center">
+        <small>&copy; 2024 Loja - Sistema de Contabilidade.</small>
+    </div>
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script th:inline="javascript">
     /*<![CDATA[*/
-
     // Funções para adicionar/remover itens dinamicamente
     let itemIndex = /*[[${compra.itensCompra != null ? compra.itensCompra.size() : 0}]]*/ 0;
-    if (itemIndex === 0) { // Se não houver itens, garante que o contador comece do zero para novos itens
+    if (itemIndex === 0) {
         itemIndex = 0;
     } else {
-        // Se houver itens preenchidos do backend, o index para o próximo deve ser o tamanho atual
         itemIndex = /*[[${compra.itensCompra.size()}]]*/ 0;
     }
-
-
     function adicionarItem() {
         const container = document.getElementById('itensCompraContainer');
         const newRow = document.createElement('div');
         newRow.classList.add('item-row');
         newRow.innerHTML = `
-                <input type="hidden" name="itensCompra[${itemIndex}].id" value=""/>
-                <div class="form-group col-md-5">
-                    <label for="produto${itemIndex}">Produto:</label>
-                    <select id="produto${itemIndex}" name="itensCompra[${itemIndex}].produto.id" class="form-control form-control-sm" required>
-                        <option value="">Selecione um Produto</option>
-                        ${
-            /* Iterar sobre os produtos disponíveis no Thymeleaf */
-            /* Isso é uma forma de passar dados Thymeleaf para JS. */
-            /* Throws an error if products is null so use empty array if null */
-            ([...(typeof produtos !== 'undefined' ? produtos : [])]).map(p => `<option value="${p.id}">${p.nome}</option>`).join('')
-        }
-                    </select>
-                </div>
-                <div class="form-group col-md-3">
-                    <label for="quantidade${itemIndex}">Qtd:</label>
-                    <input type="number" id="quantidade${itemIndex}" name="itensCompra[${itemIndex}].quantidade" class="form-control form-control-sm" min="1" required/>
-                </div>
-                <div class="form-group col-md-4">
-                    <label for="precoUnitario${itemIndex}">Preço Unitário:</label>
-                    <input type="number" id="precoUnitario${itemIndex}" name="itensCompra[${itemIndex}].precoUnitarioCompra" class="form-control form-control-sm" step="0.01" min="0" required/>
-                </div>
-                <button type="button" class="btn btn-danger btn-sm ml-2" onclick="removerItem(this)">Remover</button>
-            `;
+            <input type="hidden" name="itensCompra[${itemIndex}].id" value=""/>
+            <div class="flex-fill">
+                <label for="produto${itemIndex}" class="form-label">Produto</label>
+                <select id="produto${itemIndex}" name="itensCompra[${itemIndex}].produto.id" class="form-control form-control-sm" required>
+                    <option value="">Selecione um Produto</option>
+                </select>
+            </div>
+            <div style="width: 110px;">
+                <label for="quantidade${itemIndex}" class="form-label">Qtd</label>
+                <input type="number" id="quantidade${itemIndex}" name="itensCompra[${itemIndex}].quantidade" class="form-control form-control-sm" min="1" required/>
+            </div>
+            <div style="width: 160px;">
+                <label for="precoUnitario${itemIndex}" class="form-label">Preço Unitário</label>
+                <input type="number" id="precoUnitario${itemIndex}" name="itensCompra[${itemIndex}].precoUnitarioCompra" class="form-control form-control-sm" step="0.01" min="0" required/>
+            </div>
+            <button type="button" class="btn btn-danger btn-sm" onclick="removerItem(this)"><i class="bi bi-trash"></i> Remover</button>
+        `;
         container.appendChild(newRow);
         itemIndex++;
     }
-
     function removerItem(button) {
         const row = button.parentNode;
-        // Garante que não se remova todos os itens se a validação exigir pelo menos um
         if (document.querySelectorAll('.item-row').length > 1) {
             row.remove();
         } else {
             alert("A compra deve ter pelo menos um item.");
         }
     }
-
-    // Função para mostrar/esconder o campo de parcelas
     function toggleParcelas() {
         const formaPagamento = document.getElementById('formaPagamento').value;
         const parcelasDiv = document.getElementById('parcelasDiv');
@@ -155,15 +198,12 @@
         } else {
             parcelasDiv.style.display = 'none';
             document.getElementById('parcelas').removeAttribute('required');
-            document.getElementById('parcelas').value = ''; // Limpa o valor se mudar para à vista
+            document.getElementById('parcelas').value = '';
         }
     }
-
-    // Executa ao carregar a página para definir o estado inicial do campo parcelas
     document.addEventListener('DOMContentLoaded', function() {
         toggleParcelas();
     });
-
     /*]]>*/
 </script>
 </body>

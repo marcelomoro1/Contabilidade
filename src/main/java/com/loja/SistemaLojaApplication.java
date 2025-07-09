@@ -8,4 +8,5 @@ public class SistemaLojaApplication {
     public static void main(String[] args) {
         SpringApplication.run(SistemaLojaApplication.class, args);
     }
-} 
+}
+

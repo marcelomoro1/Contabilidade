@@ -24,7 +24,7 @@ public class BemServiceImpl implements BemService {
     private BemRepository bemRepository;
 
     @Autowired
-    private CaixaService caixaService; // **NOVO: Injeção de dependência do CaixaService**
+    private CaixaService caixaService;
 
     @Override
     @Transactional
@@ -56,7 +56,7 @@ public class BemServiceImpl implements BemService {
                 bem.setParcelasPagas(bem.getParcelasTotais());
             }
 
-            // **NOVO: Lançar a saída do valor da ENTRADA no caixa, se for um novo bem e houver entrada.**
+            //Lançar a saída do valor da ENTRADA no caixa, se for um novo bem e houver entrada
             if (isNewBem && bem.getValorEntrada().compareTo(BigDecimal.ZERO) > 0) {
                 try {
                     LancamentoCaixa lancamentoEntradaBem = new LancamentoCaixa();
@@ -77,7 +77,7 @@ public class BemServiceImpl implements BemService {
             bem.setValorParcela(BigDecimal.ZERO);
             bem.setParcelasPagas(0);
 
-            // **NOVO: Lançar a saída do VALOR TOTAL DE AQUISIÇÃO no caixa, se for um novo bem e à vista.**
+            //Lançar a saída do VALOR TOTAL DE AQUISIÇÃO no caixa, se for um novo bem e à vista.
             if (isNewBem && bem.getValorAquisicao().compareTo(BigDecimal.ZERO) > 0) {
                 try {
                     LancamentoCaixa lancamentoAquisicaoBem = new LancamentoCaixa();
@@ -113,8 +113,6 @@ public class BemServiceImpl implements BemService {
     @Override
     @Transactional
     public void deletar(Long id) {
-        // Lógica para tratar a exclusão de um bem.
-        // Opcional: Se desejar, pode-se registrar um estorno no caixa ou ajuste contábil aqui.
         bemRepository.deleteById(id);
     }
 
@@ -142,7 +140,7 @@ public class BemServiceImpl implements BemService {
             parcelasPagasNestaTransacao = 1;
         }
 
-        // **NOVO: Lançar a saída do valor da(s) parcela(s) paga(s) no caixa.**
+        //Lançar a saída do valor da(s) parcela(s) paga(s) no caixa.
         BigDecimal valorRealSaidaCaixa = valorParcelaEsperado.multiply(BigDecimal.valueOf(parcelasPagasNestaTransacao));
         try {
             LancamentoCaixa lancamentoPagamentoParcela = new LancamentoCaixa();

@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 
 public class ItemBensDireitosDTO {
     private String nome;
-    private String descricao; // Descrição opcional, se relevante
+    private String descricao;
     private BigDecimal valor;
 
     public ItemBensDireitosDTO(String nome, BigDecimal valor) {
@@ -18,7 +18,7 @@ public class ItemBensDireitosDTO {
         this.valor = valor;
     }
 
-    // Construtor padrão para JPA/Jackson, se necessário
+
     public ItemBensDireitosDTO() {
     }
 

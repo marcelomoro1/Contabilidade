@@ -101,6 +101,8 @@
                     </p>
                     <p><strong>Parcelas:</strong> <span th:text="${venda.formaPagamento == T(com.loja.model.enums.FormaPagamento).APRAZO ? venda.parcelas : '-'}"></span></p>
                     <p><strong>Valor Total da Venda:</strong> <span th:text="${'R$ ' + #numbers.formatDecimal(venda.valorTotal, 1, 2)}"></span></p>
+                    <p><strong>Valor Total de Compra dos Produtos Vendidos:</strong> <span th:text="${'R$ ' + #numbers.formatDecimal(valorTotalCompra, 1, 2)}"></span></p>
+                    <p><strong>ICMS a Pagar:</strong> <span th:text="${'R$ ' + #numbers.formatDecimal(icmsAPagar, 1, 2)}"></span></p>
                 </div>
             </div>
         </div>
@@ -119,19 +121,21 @@
                         <th>Quantidade</th>
                         <th>Preço Unitário</th>
                         <th>Subtotal</th>
-                        <th>Lucro do Item</th>
+                        <th>Débito ICMS</th>
+                        <th>Crédito ICMS</th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr th:each="item : ${venda.itensVenda}">
                         <td th:text="${item.produto.nome}"></td>
                         <td th:text="${item.quantidade}"></td>
-                        <td th:text="${'R$ ' + #numbers.formatDecimal(item.getPrecoUnitario(), 1, 2)}"></td>
+                        <td th:text="${'R$ ' + #numbers.formatDecimal(item.precoUnitario, 1, 2)}"></td>
                         <td th:text="${'R$ ' + #numbers.formatDecimal(item.getSubtotal(), 1, 2)}"></td>
-                        <td th:text="${'R$ ' + #numbers.formatDecimal(item.getLucroItem(), 1, 2)}"></td>
+                        <td th:text="${'R$ ' + #numbers.formatDecimal(item.debitoIcms, 1, 2)}"></td>
+                        <td th:text="${'R$ ' + #numbers.formatDecimal(item.creditoIcms != null ? item.creditoIcms : 0, 1, 2)}"></td>
                     </tr>
                     <tr th:if="${#lists.isEmpty(venda.itensVenda)}">
-                        <td colspan="5" class="text-center text-muted py-3">Nenhum item encontrado para esta venda.</td>
+                        <td colspan="6" class="text-center text-muted py-3">Nenhum item encontrado para esta venda.</td>
                     </tr>
                     </tbody>
                 </table>

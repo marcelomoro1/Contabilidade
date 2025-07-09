@@ -26,7 +26,7 @@ public class HomeController {
     private ClienteService clienteService;
 
     @Autowired
-    private CaixaService caixaService; // <-- NOVO: Injeção do CaixaService
+    private CaixaService caixaService;
 
     @GetMapping("/")
     public String home(Model model) {
@@ -35,7 +35,7 @@ public class HomeController {
         Long totalVendas = vendaService.countVendasByData(hoje);
         model.addAttribute("totalVendas", totalVendas);
 
-        // É uma boa prática usar BigDecimal para valores monetários para evitar problemas de ponto flutuante.
+
         Double faturamentoDouble = vendaService.calcularFaturamentoPorData(hoje);
         BigDecimal faturamento = (faturamentoDouble != null) ? BigDecimal.valueOf(faturamentoDouble) : BigDecimal.ZERO;
         model.addAttribute("faturamento", faturamento);
@@ -47,16 +47,14 @@ public class HomeController {
         Long totalClientes = clienteService.countClientes();
         model.addAttribute("totalClientes", totalClientes);
 
-        // <-- NOVO: Obter e adicionar o saldo atual do caixa ao Model
         BigDecimal saldoCaixaAtual = caixaService.calcularSaldoAtual();
-        // Garante que, se o serviço retornar null (improvável com COALESCE no SQL, mas por segurança),
-        // o saldo seja BigDecimal.ZERO
+
         if (saldoCaixaAtual == null) {
             saldoCaixaAtual = BigDecimal.ZERO;
         }
         model.addAttribute("saldoCaixaAtual", saldoCaixaAtual);
-        // --> FIM NOVO
 
-        return "index"; // Assumindo que você tem um 'index.html' Thymeleaf template
+
+        return "index";
     }
 }

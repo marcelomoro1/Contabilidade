@@ -22,19 +22,17 @@ public class CapitalSocialServiceImpl implements CapitalSocialService {
     private CapitalSocialRepository capitalSocialRepository;
 
     @Autowired
-    private CaixaService caixaService; // <-- **PASSO 1: INJETAR O CAIXASERVICE**
+    private CaixaService caixaService;
 
     @Override
     @Transactional
     public CapitalSocial salvar(CapitalSocial capitalSocial) {
-        // Primeiro, salva o registro do Capital Social em si.
+
         CapitalSocial capitalSalvo = capitalSocialRepository.save(capitalSocial);
 
-        // --- **PASSO 2: CRIAR O LANÇAMENTO NO CAIXA** ---
-        // Este bloco de código é a **parte que faltava** no seu CapitalSocialServiceImpl
-        // e que vai resolver o problema do balanço.
+
         try {
-            // Cria um novo lançamento de caixa do tipo ENTRADA
+
             LancamentoCaixa lancamentoCaixa = new LancamentoCaixa();
             lancamentoCaixa.setTipo(TipoLancamentoCaixa.ENTRADA);
             lancamentoCaixa.setValor(capitalSalvo.getValorAbertura()); // Pega o valor do Capital Social que acabou de ser salvo
@@ -47,12 +45,8 @@ public class CapitalSocialServiceImpl implements CapitalSocialService {
 
         } catch (Exception e) {
             System.err.println("ERRO: Falha ao registrar a entrada do Capital Social no Caixa: " + e.getMessage());
-            // É importante considerar como tratar este erro. Você pode querer lançar
-            // uma exceção novamente para que a transação inteira (salvar capital e registrar caixa)
-            // seja desfeita, garantindo a atomicidade.
             throw new RuntimeException("Erro ao processar o Capital Social e registrar entrada no Caixa.", e);
         }
-        // --- FIM DO BLOCO DE LANÇAMENTO NO CAIXA ---
 
         return capitalSalvo;
     }

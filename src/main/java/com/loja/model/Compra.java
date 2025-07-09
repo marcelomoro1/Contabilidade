@@ -85,10 +85,58 @@ public class Compra {
             return this.valorTotal;
         }
 
-        BigDecimal valorTotalPago = this.valorParcela.multiply(BigDecimal.valueOf(this.parcelasPagas != null ? this.parcelasPagas : 0));
+        // Se todas as parcelas foram pagas, saldo é zero
+        if (this.parcelasPagas != null && this.parcelasPagas >= this.parcelas) {
+            return BigDecimal.ZERO;
+        }
+
+        // Calcular valor total pago
+        BigDecimal valorTotalPago = BigDecimal.ZERO;
+        if (this.parcelasPagas != null && this.parcelasPagas > 0) {
+            // Para as primeiras parcelas, usar o valor base
+            int parcelasPagasBase = this.parcelasPagas;
+            valorTotalPago = this.valorParcela.multiply(BigDecimal.valueOf(parcelasPagasBase));
+        }
 
         BigDecimal saldo = this.valorTotal.subtract(valorTotalPago);
-
         return saldo.compareTo(BigDecimal.ZERO) < 0 ? BigDecimal.ZERO : saldo;
+    }
+
+    @Transient
+    public BigDecimal getValorTotalPago() {
+        if (this.valorParcela == null || this.parcelasPagas == null) {
+            return BigDecimal.ZERO;
+        }
+        return this.valorParcela.multiply(BigDecimal.valueOf(this.parcelasPagas));
+    }
+
+    @Transient
+    public BigDecimal getValorProximaParcela() {
+        if (this.formaPagamento != FormaPagamento.APRAZO || this.valorParcela == null || this.parcelas == null || this.parcelasPagas == null) {
+            return this.valorParcela;
+        }
+        
+        // Se for a última parcela, ajusta para cobrir a diferença
+        if (this.parcelasPagas + 1 == this.parcelas) {
+            // Calcula o valor total das parcelas já pagas
+            BigDecimal valorParcelasPagas = this.valorParcela.multiply(BigDecimal.valueOf(this.parcelasPagas));
+            // A última parcela é o que falta para completar o valor total
+            BigDecimal valorUltimaParcela = this.valorTotal.subtract(valorParcelasPagas);
+            
+            // Log para debug
+            System.out.println("=== DEBUG VALOR PRÓXIMA PARCELA ===");
+            System.out.println("Parcelas Pagas: " + this.parcelasPagas);
+            System.out.println("Total de Parcelas: " + this.parcelas);
+            System.out.println("É última parcela: " + (this.parcelasPagas + 1 == this.parcelas));
+            System.out.println("Valor Parcela Base: " + this.valorParcela);
+            System.out.println("Valor Total: " + this.valorTotal);
+            System.out.println("Valor Parcelas Pagas: " + valorParcelasPagas);
+            System.out.println("Valor Última Parcela: " + valorUltimaParcela);
+            System.out.println("===================================");
+            
+            return valorUltimaParcela;
+        }
+        
+        return this.valorParcela;
     }
 }

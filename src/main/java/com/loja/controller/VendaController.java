@@ -8,6 +8,8 @@ import com.loja.model.enums.FormaPagamento;
 import com.loja.service.ClienteService;
 import com.loja.service.ProdutoService;
 import com.loja.service.VendaService;
+import com.loja.repository.CompraRepository;
+import com.loja.model.ItemCompra;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -32,6 +34,9 @@ public class VendaController {
     @Autowired
     private VendaService vendaService;
 
+    @Autowired
+    private CompraRepository compraRepository;
+
     @GetMapping
     public String listar(Model model) {
         model.addAttribute("vendas", vendaService.listarTodas());
@@ -45,7 +50,44 @@ public class VendaController {
             if (venda == null) {
                 throw new IllegalArgumentException("Venda não encontrada com ID: " + id);
             }
+            // Garante que cada item tenha débito e crédito ICMS preenchidos
+            for (ItemVenda item : venda.getItensVenda()) {
+                if (item.getDebitoIcms() == null && item.getPrecoUnitario() != null && item.getQuantidade() != null) {
+                    item.setDebitoIcms(item.getPrecoUnitario().multiply(BigDecimal.valueOf(0.17)).multiply(BigDecimal.valueOf(item.getQuantidade())));
+                }
+                if (item.getCreditoIcms() == null && item.getProduto() != null && item.getProduto().getId() != null) {
+                    BigDecimal creditoIcms = compraRepository.findAll().stream()
+                        .flatMap(compra -> compra.getItensCompra().stream())
+                        .filter(ic -> ic.getProduto().getId().equals(item.getProduto().getId()))
+                        .sorted((a, b) -> b.getId().compareTo(a.getId()))
+                        .map(ItemCompra::getCreditoIcms)
+                        .findFirst()
+                        .orElse(BigDecimal.ZERO);
+                    item.setCreditoIcms(creditoIcms);
+                }
+            }
+            // Calcular valor total de compra dos produtos vendidos
+            BigDecimal valorTotalCompra = venda.getItensVenda().stream()
+                .map(item -> {
+                    if (item.getProduto() != null && item.getProduto().getId() != null) {
+                        BigDecimal precoCompra = compraRepository.findAll().stream()
+                            .flatMap(compra -> compra.getItensCompra().stream())
+                            .filter(ic -> ic.getProduto().getId().equals(item.getProduto().getId()))
+                            .sorted((a, b) -> b.getId().compareTo(a.getId()))
+                            .map(ItemCompra::getPrecoUnitarioCompra)
+                            .findFirst()
+                            .orElse(BigDecimal.ZERO);
+                        return precoCompra.multiply(BigDecimal.valueOf(item.getQuantidade()));
+                    }
+                    return BigDecimal.ZERO;
+                })
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+            BigDecimal icmsDebito = venda.getValorTotal().multiply(BigDecimal.valueOf(0.17));
+            BigDecimal icmsCredito = valorTotalCompra.multiply(BigDecimal.valueOf(0.17));
+            BigDecimal icmsAPagar = icmsDebito.subtract(icmsCredito);
             model.addAttribute("venda", venda);
+            model.addAttribute("valorTotalCompra", valorTotalCompra);
+            model.addAttribute("icmsAPagar", icmsAPagar);
             return "vendas/detalhes";
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("erro", "Erro ao buscar venda: " + e.getMessage());
@@ -58,11 +100,10 @@ public class VendaController {
         model.addAttribute("clientes", clienteService.listarTodos());
         model.addAttribute("produtos", produtoService.listarTodos());
         model.addAttribute("formasPagamento", FormaPagamento.values());
-
         Venda venda = new Venda();
-        // A lista de itensVenda já é inicializada no construtor da Venda como um ArrayList vazio.
-        // Se desejar que o formulário já comece com uma linha de item vazia, descomente abaixo:
-        // venda.addItemVenda(new ItemVenda()); // Adiciona um item vazio para começar
+        // Inicializa um item vazio sem valores pré-definidos
+        ItemVenda item = new ItemVenda();
+        venda.addItemVenda(item);
         model.addAttribute("venda", venda);
         return "vendas/form";
     }
@@ -72,7 +113,7 @@ public class VendaController {
                               RedirectAttributes redirectAttributes,
                               Model model) {
         try {
-            // 1. Validação e Set Cliente
+            //Validação e Set Cliente
             if (venda.getCliente() == null || venda.getCliente().getId() == null) {
                 throw new IllegalArgumentException("Cliente deve ser selecionado.");
             }
@@ -82,7 +123,7 @@ public class VendaController {
             }
             venda.setCliente(cliente); // Seta o objeto Cliente gerenciado
 
-            // 2. Validação e Processamento dos Itens de Venda
+            //Validação e Processamento dos Itens de Venda
             // Remove itens vazios ou inválidos que podem vir do formulário (sem produto ou quantidade)
             if (venda.getItensVenda() != null) { // Adiciona verificação de null
                 venda.getItensVenda().removeIf(item ->
@@ -104,22 +145,30 @@ public class VendaController {
                 if (produto == null) {
                     throw new IllegalArgumentException("Produto não encontrado para o item: " + item.getProduto().getId());
                 }
-                item.setProduto(produto); // Seta o objeto Produto gerenciado
-                item.setVenda(venda); // Seta a referência bidirecional para a venda
-                // Garante que precoUnitario é o preço de venda atual do produto,
-                // e que quantidade não é nula.
-                item.setPrecoUnitario(Objects.requireNonNullElse(produto.getPrecoVenda(), BigDecimal.ZERO));
+                item.setProduto(produto);
+                item.setVenda(venda);
+                item.setPrecoUnitario(Objects.requireNonNullElse(item.getPrecoUnitario(), BigDecimal.ZERO));
                 item.setQuantidade(Objects.requireNonNullElse(item.getQuantidade(), 0));
-
+                BigDecimal debitoIcms = item.getPrecoUnitario().multiply(BigDecimal.valueOf(0.17)).multiply(BigDecimal.valueOf(item.getQuantidade()));
+                item.setDebitoIcms(debitoIcms);
+                // Buscar o último crédito ICMS do produto nas compras
+                BigDecimal creditoIcms = compraRepository.findAll().stream()
+                    .flatMap(compra -> compra.getItensCompra().stream())
+                    .filter(ic -> ic.getProduto().getId().equals(produto.getId()))
+                    .sorted((a, b) -> b.getId().compareTo(a.getId())) // Pega o mais recente
+                    .map(ItemCompra::getCreditoIcms)
+                    .findFirst()
+                    .orElse(BigDecimal.ZERO);
+                item.setCreditoIcms(creditoIcms);
                 totalVendaCalculado = totalVendaCalculado.add(item.getSubtotal()); // Usa o getSubtotal do ItemVenda
             }
 
             venda.setValorTotal(totalVendaCalculado.setScale(2, RoundingMode.HALF_UP)); // Define o valor total da venda no backend
 
-            // 3. Define a Data da Venda
+            //Define a Data da Venda
             venda.setDataVenda(LocalDateTime.now());
 
-            // 4. Validação e Configuração da Forma de Pagamento e Parcelamento
+            //Validação e Configuração da Forma de Pagamento e Parcelamento
             if (venda.getFormaPagamento() == null) {
                 throw new IllegalArgumentException("Forma de pagamento deve ser selecionada.");
             }
@@ -141,13 +190,13 @@ public class VendaController {
             }
 
 
-            // 5. Salvar a Venda (que agora contém todos os dados e itens populados)
+            //Salvar a Venda
             vendaService.salvar(venda);
             redirectAttributes.addFlashAttribute("mensagem", "Venda registrada com sucesso!");
             return "redirect:/vendas";
 
         } catch (Exception e) {
-            // Logar o erro para depuração
+            //Logar o erro para depuração
             System.err.println("Erro ao registrar venda: " + e.getMessage());
             e.printStackTrace(); // Em produção, use um logger (ex: SLF4J)
 
@@ -158,13 +207,9 @@ public class VendaController {
             model.addAttribute("clientes", clienteService.listarTodos());
             model.addAttribute("produtos", produtoService.listarTodos());
             model.addAttribute("formasPagamento", FormaPagamento.values());
-
-            // O objeto 'venda' que veio do formulário (e foi parcialmente preenchido/validado)
-            // é passado de volta para manter os dados preenchidos pelo usuário.
-            // Se o cliente ou produtos não foram encontrados, eles serão nulos no 'venda' retornado.
             model.addAttribute("venda", venda);
 
-            return "vendas/form"; // Retorna para o formulário, sem redirecionar
+            return "vendas/form";
         }
     }
 

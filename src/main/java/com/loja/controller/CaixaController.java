@@ -28,7 +28,6 @@ public class CaixaController {
                               @RequestParam(value = "dataInicio", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataInicio,
                               @RequestParam(value = "dataFim", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataFim) {
 
-        // Se as datas não forem fornecidas, use o mês atual ou os últimos 30 dias
         if (dataInicio == null) {
             dataInicio = LocalDate.now().withDayOfMonth(1); // Início do mês atual
         }
@@ -49,7 +48,7 @@ public class CaixaController {
         model.addAttribute("novoLancamento", new LancamentoCaixa()); // Para o formulário de novo lançamento
         model.addAttribute("tiposLancamento", TipoLancamentoCaixa.values()); // Para o select do tipo
 
-        return "caixa/detalhes"; // Nome do seu template Thymeleaf
+        return "caixa/detalhes";
     }
 
     @PostMapping("/registrar")

@@ -40,14 +40,13 @@ public class CompraController {
     @GetMapping("/nova")
     public String novaCompra(Model model) {
         Compra compra = new Compra();
-        // Inicializa com um item de compra para o formulário, se o formulário permitir adicionar múltiplos itens dinamicamente
-        // Se o formulário permite adicionar múltiplos itens via JS, a inicialização pode ser um pouco diferente.
-        // Se for um formulário simples com 1 item fixo, isso está ok.
-        if (compra.getItensCompra() == null) { // Garante que a lista não é nula antes de adicionar
+        if (compra.getItensCompra() == null) {
             compra.setItensCompra(new ArrayList<>());
         }
-        compra.getItensCompra().add(new ItemCompra());
-
+        ItemCompra item = new ItemCompra();
+        // Preenche o crédito ICMS inicial (0)
+        item.setCreditoIcms(BigDecimal.ZERO);
+        compra.getItensCompra().add(item);
         model.addAttribute("compra", compra);
         model.addAttribute("fornecedores", fornecedorService.listarTodos());
         model.addAttribute("produtos", produtoService.listarTodos());
@@ -59,11 +58,6 @@ public class CompraController {
     public String salvarCompra(@ModelAttribute("compra") Compra compra,
                                RedirectAttributes redirectAttributes) {
         try {
-            // **IMPORTANTE**: Ao receber um objeto do formulário (ModelAttribute),
-            // se você tem IDs de entidades relacionadas (Fornecedor, Produto),
-            // você precisa buscá-las do banco de dados para anexá-las à sessão
-            // do Hibernate/JPA. Caso contrário, você pode ter "detached entity passed to persist"
-            // ou outros erros.
 
             // Garante que o fornecedor esteja vinculado à compra como uma entidade gerenciada
             if (compra.getFornecedor() != null && compra.getFornecedor().getId() != null) {
@@ -114,6 +108,14 @@ public class CompraController {
         try {
             Compra compra = compraService.buscarPorId(id);
             if (compra != null) {
+                // Garante que cada item tenha o crédito ICMS preenchido
+                for (ItemCompra item : compra.getItensCompra()) {
+                    if (item.getCreditoIcms() == null) {
+                        BigDecimal credito = item.getPrecoUnitarioCompra() != null && item.getQuantidade() != null ?
+                            item.getPrecoUnitarioCompra().multiply(BigDecimal.valueOf(item.getQuantidade())).multiply(BigDecimal.valueOf(0.17)) : BigDecimal.ZERO;
+                        item.setCreditoIcms(credito);
+                    }
+                }
                 model.addAttribute("compra", compra);
                 return "compras/detalhes";
             } else {
@@ -146,7 +148,7 @@ public class CompraController {
     @GetMapping("/excluir/{id}")
     public String excluirCompra(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         try {
-            compraService.deletar(id); // Assumindo que seu método de serviço é 'deletar'
+            compraService.deletar(id);
             redirectAttributes.addFlashAttribute("mensagem", "Compra excluída e estoque ajustado com sucesso!");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("erro", "Erro ao excluir compra: " + e.getMessage());

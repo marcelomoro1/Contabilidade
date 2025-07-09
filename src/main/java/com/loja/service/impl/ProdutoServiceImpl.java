@@ -31,7 +31,6 @@ public class ProdutoServiceImpl implements ProdutoService {
     @Override
     @Transactional
     public Produto salvar(Produto produto) {
-        // Você pode adicionar validações aqui antes de salvar
         return produtoRepository.save(produto);
     }
 
