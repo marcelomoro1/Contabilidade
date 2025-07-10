@@ -90,18 +90,21 @@ src/
 │   │           ├── controller/       # Controladores REST e MVC
 │   │           ├── model/            # Entidades JPA
 │   │           │   └── enums/        # Enumeradores
+│   │           ├── dto/              # Objetos de Transferência de Dados (DTOs)
 │   │           ├── repository/       # Repositórios JPA
 │   │           ├── service/          # Camada de serviço
 │   │           └── LojaApplication.java
 │   └── resources/
-│       ├── static/
-│       │   ├── css/                  # Estilos CSS
-│       │   └── js/                   # Scripts JavaScript
 │       ├── templates/                # Templates Thymeleaf
 │       │   ├── clientes/             # Páginas de clientes
 │       │   ├── fornecedores/         # Páginas de fornecedores
 │       │   ├── produtos/             # Páginas de produtos
 │       │   └── vendas/               # Páginas de vendas
+│       │   └── balancoPatrimonial/   # Páginas do balanço patrimonial
+│       │   └── bens/                 # Páginas dos bens
+│       │   └── capitalSocial/        # Páginas do capital social
+│       │   └── compras/              # Páginas de compras
+│       │   └── caixa/                # Páginas do caixa
 │       └── application.properties    # Configurações da aplicação
 ```
 
