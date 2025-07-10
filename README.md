@@ -1,4 +1,4 @@
-# Sistema de Gerenciamento de vendas
+# Sistema de Contabilidade
 
 ![Banner do Sistema](https://img.shields.io/badge/Sistema%20de%20Contabilidade-v1.0-blue)
 ![Java](https://img.shields.io/badge/Java-17-red)
