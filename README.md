@@ -27,21 +27,26 @@ O Projeto é uma aplicação web desenvolvida para gerenciar operações comerci
 - Cadastro de clientes (pessoa física e jurídica)
 - Visualização de detalhes do cliente
 - Edição e exclusão de clientes
-- Validação de CPF/CNPJ
 
 ### Gestão de Fornecedores
 - Cadastro de fornecedores
 - Visualização de detalhes do fornecedor
 - Edição e exclusão de fornecedores
-- Validação de CNPJ
 
 ### Gestão de Produtos
-- Cadastro de produtos com preços de compra e venda
+- Cadastro de produtos
 - Controle de estoque
-- Cálculo automático de crédito e débito de ICMS
 - Visualização, edição e exclusão de produtos
 
+### Gestão de Compras
+- Cálculo automático de crédito ICMS
+- Cadastro de compras com fornecedor e produto
+- Seleção de forma de pagamento (à vista ou a prazo)
+- Visualização de detalhes da compra
+- Exclusão da compra
+
 ### Gestão de Vendas
+- Cálculo automático de débito ICMS e ICMS à pagar
 - Registro de vendas com cliente e produto
 - Seleção de forma de pagamento (à vista ou a prazo)
 - Cálculo automático de valores totais
