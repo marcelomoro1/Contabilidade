@@ -119,8 +119,8 @@ src/
 
 1. Clone o repositório:
 ```bash
-git clone https://github.com/seu-usuario/sistema-contabilidade.git
-cd sistema-contabilidade
+git clone https://github.com/seu-usuario/SistemaContabilidade.git
+cd SistemaContabilidade
 ```
 
 2. Compile o projeto:
